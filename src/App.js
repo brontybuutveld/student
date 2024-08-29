@@ -5,6 +5,7 @@ import Calendar from './pages/Calendar';
 import Chat from './pages/Chat';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import UserHome from "./pages/UserHome";
 
 function App() {
     return (
@@ -18,6 +19,9 @@ function App() {
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/chat" element={<Chat />} />
                     <Route path="/calendar" element={<Calendar />} />
+
+                    {/** for testing */}
+                    <Route path="/navpage" element={<UserHome />} />
                 </Routes>
             </BrowserRouter>
         </div>
