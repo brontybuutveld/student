@@ -1,7 +1,7 @@
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Home from './pages/Home';
 import Account from './pages/Account';
-import Calendar from './pages/Calendar';
+import CalendarPage from './pages/Calendar';
 import Chat from './pages/Chat';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
@@ -18,7 +18,7 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/chat" element={<Chat />} />
-                    <Route path="/calendar" element={<Calendar />} />
+                    <Route path="/calendar" element={<CalendarPage />} />
 
                     {/** for testing */}
                     <Route path="/navpage" element={<UserHome />} />
