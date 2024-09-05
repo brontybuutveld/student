@@ -1,16 +1,40 @@
-
 li {
-    display: inline-block;
-    margin-left: 3px;
+  display: inline-block;
+  margin-left: 3px;
 }
 
 ul {
-    text-align: center;
-    border: 3px solid green;
+  text-align: center;
+  border: 3px solid green;
 }
 
-a:link, a:visited, a:active, a:hover {
-    color: white;
-    text-decoration: none;
+a:link,
+a:visited,
+a:active,
+a:hover {
+  color: white;
+  text-decoration: none;
+}
 
+body {
+  background-color: #202020;
+  color: white;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+.custom-card a {
+  color: black;
+}
+
+.underline-link {
+  text-decoration: underline !important;
+}
+
+.center-container {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  min-height: 90vh;
+  margin: 0 auto;
 }
