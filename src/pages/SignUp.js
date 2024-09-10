@@ -11,12 +11,15 @@ import { Form, Button, Card, Col, Row } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function SignUp() {
+  //Form input state vairables
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [registerFirst, setRegisterFirst] = useState("");
   const [registerLast, setRegisterLast] = useState("");
+
+  //Validation and error handling state variables
   const [user, setUser] = useState(null); // Initialize user as null
   const [passwordError, setPasswordError] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -30,10 +33,11 @@ export default function SignUp() {
     });
   }, []);
 
+  //
   const register = async (event) => {
     event.preventDefault();
 
-    //Form validation
+    //Form validation check
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -48,8 +52,10 @@ export default function SignUp() {
       return;
     }
 
+    //Password match check
     if (registerPassword !== confirmPassword) {
-      setConfirmPassword("Password do not match");
+      setConfirmPasswordError("Password do not match");
+      return;
     }
 
     try {
@@ -68,17 +74,7 @@ export default function SignUp() {
         email: registerEmail,
       });
 
-      //This will clear form after succesfull registration
-      setPasswordError("");
-      setConfirmPassword("");
-      setConfirmPasswordError("");
-      setRegisterEmail("");
-      setRegisterPassword("");
-      setRegisterFirst("");
-      setRegisterLast("");
-      setEmailError("");
-      setValidated(false);
-      setIsRegistered(true); //Set resgistration status
+      setIsRegistered(true); //Flag user as succesfully registered
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         setEmailError("This email is already in use");
@@ -112,10 +108,12 @@ export default function SignUp() {
             </Card.Body>
           ) : (
             <Card.Body>
+              {/*Sign up form*/}
               <h3 className="mb-4 text-center">Sign Up</h3>
               <Form noValidate validated={validated} onSubmit={register}>
                 <Row>
                   <Col>
+                    {/*First name input*/}
                     <Form.Group className="mb-3" controlId="formFirstName">
                       <Form.Label>First Name</Form.Label>
                       <Form.Control
@@ -133,6 +131,7 @@ export default function SignUp() {
                     </Form.Group>
                   </Col>
                   <Col>
+                    {/*Last name input*/}
                     <Form.Group className="mb-3" controlId="formLastName">
                       <Form.Label>Last Name</Form.Label>
                       <Form.Control
@@ -151,6 +150,7 @@ export default function SignUp() {
                   </Col>
                 </Row>
 
+                {/*Email input*/}
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Email</Form.Label>
                   <Form.Control
@@ -169,6 +169,7 @@ export default function SignUp() {
                   </Form.Control.Feedback>
                 </Form.Group>
 
+                {/*Password input*/}
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                   <Form.Label>Password</Form.Label>
                   <Form.Control
@@ -193,6 +194,7 @@ export default function SignUp() {
                   </Form.Control.Feedback>
                 </Form.Group>
 
+                {/*Confirm Password input*/}
                 <Form.Group className="mb-3" controlId="formConfirmPassword">
                   <Form.Label>Confirm Password</Form.Label>
                   <Form.Control
