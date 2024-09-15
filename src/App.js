@@ -5,7 +5,7 @@ import Calendar from './pages/Calendar';
 import Chat from './pages/Chat';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
-import UserProfile from "./components/UserProfile";
+import UserProfile from "./pages/UserProfile";
 
 function App() {
     return (

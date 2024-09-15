@@ -38,3 +38,13 @@ body {
   min-height: 90vh;
   margin: 0 auto;
 }
+
+.avatar {
+  vertical-align: middle;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border-width: 5px;
+  border-color: gray;
+  border-style: outset;
+}
