@@ -65,14 +65,18 @@ export default function SignUp() {
         registerEmail,
         registerPassword
       );
-      console.log(userCredential.user);
+      console.log("User Created: " + userCredential.user);
 
       // Store additional user information in Firestore (first and last name as well as email)
+      // (may be changed) also store bio and level here too
       await setDoc(doc(db, "users", userCredential.user.uid), {
         firstName: registerFirst,
         lastName: registerLast,
         email: registerEmail,
+        bio: "No bio available", 
+        level: 1, 
       });
+      
 
       setIsRegistered(true); //Flag user as succesfully registered
     } catch (error) {
