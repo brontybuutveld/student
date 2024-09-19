@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 export default function Login() {
     const [email, setEmail] = useState("");
     const [validated, setValidated] = useState(false);
-    const [isRegistered, setIsRegistered] = useState(false);
+    const [isSignedIn, setIsSignedIn] = useState(false);
     const [password, setPassword] = useState("");
 
     const [user, setUser] = useState(null); // Initialize user as null
@@ -36,19 +36,20 @@ export default function Login() {
           return;
         }
 
-        //TODO work out how tf to actually log someone in
-        const auth = getAuth();
+        setIsSignedIn(true);        
+       const auth = getAuth();
         signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Signed in 
           const user = userCredential.user;
-          // ...
+          console.log("Signed in as " + user.email)
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
+          console.log(errorMessage)
         });
-        console.log(password);
+        
     }
   
 
@@ -61,16 +62,16 @@ return (
       className = "login-card"
       style={{ maxWidth: "400px", width: "100%"}}>
       {/*Shows the successfull card after sucessfull registration */}
-      {isRegistered ? (
+      {isSignedIn ? (
         <Card.Body>
           <h3 className="mb-4 text-center">Success!</h3>
           <p className="text-center">
             You Have Been Logged In!
           </p>
-          <Link to="/login">
+          <Link to="/Home">
             <div className="text-center">
               <Button variant="primary" type="submit">
-                Go to login
+                Home
               </Button>
             </div>
           </Link>
@@ -134,3 +135,4 @@ return (
     </>
   );
 }
+
