@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { db, useAuth, uploadProfile } from '../firebase.js';
 import { doc, getDoc } from 'firebase/firestore';
 import Header from '../components/Header.js';
+import Level from '../components/Level.js';
 
 export default function UserProfile() {
   const { currentUser, userData } = useAuth();
@@ -92,6 +93,7 @@ export default function UserProfile() {
         <div>
           <button>Follow</button>
           <button>Message</button>
+          {/**<Level />*/}
         </div>
       )}
 
@@ -102,6 +104,7 @@ export default function UserProfile() {
           <button disabled={loading || !photo} onClick={handleUploadClick}>Upload profile picture</button>
         </div>
       )}
+      
     </>
   );
 }
