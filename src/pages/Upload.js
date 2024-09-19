@@ -106,6 +106,7 @@ export default function Upload() {
         // Delete the file
         deleteObject(ref).then(() => {
             // File deleted successfully
+
         }).catch((error) => {
             // Uh-oh, an error occurred!
         });
@@ -114,7 +115,7 @@ export default function Upload() {
     function newDir() {
         const dir = ref(storage, `users/${UID}/${dirName}/.unfortunatelyEmptyDirectoriesAreDeleted`);
         uploadString(dir, "").then(() => {
-
+            setSubDirs((prev) => [...prev, dirName]);
         }).catch((error) => {
 
         });
@@ -142,9 +143,9 @@ export default function Upload() {
                 </tr>
 
 
-                {subDirs.map((subDir) => {
+                {subDirs && subDirs.map((subDir) => {
                     return (
-                        <tr>{subDir}</tr>
+                        <tr>{subDir} (subdirectory)</tr>
                     );
                 })}
 
