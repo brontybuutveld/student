@@ -1,10 +1,33 @@
+/* defining variables used as template colours */
+:root {
+  /* usage: var(--blue) */
+  --accentcolor: #ffb9bb;
+  --maincolor: #0D103C;
+  --maincoloralt: #1b3076;
+  --white: #fff;
+  --black: #000;
+}
+
+html {
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  min-height: 100%;
+}
+
+p {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 li {
-  display: inline-block;
-  margin-left: 3px;
+  text-decoration: none;
+  list-style-type: none;
 }
 
 a:link, a:visited, a:active, a:hover {
-  color: lightgrey;
+  color: var(--black);
+  text-decoration: none;
+}
+
+a:link, a:visited, a:active, a:hover {
   text-decoration: none;
 
 }
@@ -15,7 +38,6 @@ footer {
   width: 100%;
   height: 10rem;
   text-align: center;
-  border: 3px solid green;
 }
 
 
@@ -52,9 +74,94 @@ body {
   border-style: outset;
 }
 
-/* style for user home page */
+.button {
+  background-color: var(--accentcolor);
+  color: var(--maincolor);
+  padding: 2vh;
+  margin: 0px 1vw;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: var(--white);
+  color: white;
+}
+
+/* header styling */
+.headerbar {
+  background-color: var(--maincolor);
+  overflow: hidden;
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0;
+}
+
+.headerbar a {
+  float: left;
+  color: var(--white);
+  text-align: center;
+  padding: 15px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.headerbar a:hover {
+  background-color: #ffffff;
+  color: black;
+}
+
+.headerbar .rightbutton {
+  float:right;
+  background-color: var(--accentcolor);
+  color: var(--black)
+}
+
+.headerbar .header-right {
+  float:right;
+  margin: 0;
+  padding: 0;
+}
+
+.mini-avatar {
+  float: right;
+  vertical-align: middle;
+  width: 55.5px;
+  height: 55.5px;
+  border-radius: 50%;
+}
+
+/* home page */
+
+.home {
+  float: left;
+  background: var(--maincoloralt);
+  background: linear-gradient(var(--maincolor) 0%, var(--maincoloralt) 100%);
+  color: var(--white);
+  width: 100%;
+  height: 100vh;
+}
+
+.home-cont {
+  margin: 25vh 10vw;
+}
+
+.home-cont h1 {
+  font-size: 3em;
+  margin-bottom: 4vh;
+}
+
+.home-buttoncont {
+  margin-top: 3rem;
+  width:100%;
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+/* style for user nav page */
 .navpage-container {
-  background-color: white;
+  background-color: var(--white);
   display: flexbox;
   flex-wrap: wrap;
   flex-direction: row;
@@ -64,9 +171,8 @@ body {
 }
 
 .navpage-item {
-  background-color: rgb(45, 41, 70);
-  color: white;
-  text-decoration: none;
+  background-color: var(--maincoloralt);
+  color: rgb(255, 255, 255);
   padding: 1rem;
   margin: 10px;
   width: 16rem;
@@ -77,8 +183,12 @@ body {
 }
 
 .navpage-item:hover {
-  cursor: pointer;
-  background-color: rgb(16, 15, 26);
+  background-color: var(--maincolor);
+}
+
+.navpage-item p {
+  margin-top: -10px;
+  color: rgb(210, 210, 210);
 }
 
 .navpage-image {

@@ -1,6 +1,5 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import Home from "./Home";
 import placeholder from "../components/placeholder.png";
 
 /** this is page shown after users log in */
