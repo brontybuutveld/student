@@ -18,6 +18,9 @@ footer {
   border: 3px solid green;
 }
 
+table, th, td {
+  border: 1px solid white;
+}
 
 body {
   background-color: #202020;

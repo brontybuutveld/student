@@ -13,6 +13,8 @@ export default function Header() {
                 <li><a href={"/login"}>Login</a></li>
                 <li>-</li>
                 <li><a href={"/signup"}>Sign up</a></li>
+                <li>-</li>
+                <li><a href={"/upload"}>Upload</a></li>
             </ol>
             <h1>YIYAPNP is yet another poorly named project</h1>
         </div>
