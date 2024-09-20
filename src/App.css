@@ -40,6 +40,9 @@ footer {
   text-align: center;
 }
 
+table, th, td {
+  border: 1px solid white;
+}
 
 body {
   background-color: #202020;

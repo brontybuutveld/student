@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import UserProfile from "./pages/UserProfile";
 import UserHome from "./pages/UserHome";
+import Upload from "./pages/Upload";
 
 function App() {
     return (
@@ -21,7 +22,7 @@ function App() {
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/" element={<Home />} />
                     <Route path="/profile/:userid" element={<UserProfile />} />
-
+                    <Route path="/upload" element={<Upload />} />
                     {/** for testing */}
                     <Route path="/navpage" element={<UserHome />} />
                 </Routes>
