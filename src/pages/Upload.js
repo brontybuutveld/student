@@ -23,6 +23,7 @@ export default function Upload() {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUID(user.uid);  // Set the UID once the user is authenticated
+
                 listAll(ref(storage, `users/${user.uid}/`)).then((response) => {
                     const urlsPromises = [];
                     const files = [];
@@ -50,7 +51,6 @@ export default function Upload() {
                     })
                     response.prefixes.forEach((prefixe) => {
                         subdir.push(prefixe.name);
-                        //console.log(prefixe.name);
                     })
 
                     setSubDirs(subdir);
@@ -80,7 +80,7 @@ export default function Upload() {
         if (image == null) return;
         if (currentUser == null) return;
         const imageRef = ref(storage, `users/${UID + "/" + image.name}`);
-        console.log(`users/${UID + "/" + image.name}`);
+        //console.log(`users/${UID + "/" + image.name}`);
         uploadBytes(imageRef, image).then((snapshot) => {
             getDownloadURL(snapshot.ref).then((url) => {
                 setURL((prev) => [...prev, url]);
@@ -102,13 +102,46 @@ export default function Upload() {
         });
     }
 
-    const deleteFile = (ref) => {
-        // Delete the file
-        deleteObject(ref).then(() => {
-            // File deleted successfully
+    const deleteFile = (refe) => {
+        deleteObject(ref(storage, `users/${UID}/${refe}`)).then(() => {
+            listAll(ref(storage, `users/${UID}/`)).then((response) => {
+                const urlsPromises = [];
+                const files = [];
+                const sizes = [];
+                //console.log("test");
 
+                response.items.forEach((folderRef) => {
+                    files.push(folderRef.name);
+
+                    getMetadata(folderRef).then((md) => {
+                        if (md.size < 1024)
+                            sizes.push(md.size + " b");
+                        else if (md.size >= 1024 && md.size < 1024 * 1024)
+                            sizes.push((md.size / 1024).toFixed(1) + " kb");
+                        else if (md.size >= 1024 * 1024 && md.size < 1024 * 1024 * 1024)
+                            sizes.push((md.size / (1024 * 1024)).toFixed(1) + " mb");
+                        else if (md.size >= 1024 * 1024 * 1024 && md.size < 1024 * 1024 * 1024 * 1024)
+                            sizes.push((md.size / (1024 * 1024 * 1024)).toFixed(1) + " gb");
+                        else if (md.size >= 1024 * 1024 * 1024 * 1024 && md.size < 1024 * 1024 * 1024 * 1024 * 1024)
+                            sizes.push((md.size / (1024 * 1024 * 1024 * 1024)).toFixed(1) + " tb");
+                    });
+                })
+
+                setFilename(files);
+                setSize(sizes);
+
+                // Get all URLs asynchronously
+                response.items.forEach((item) => {
+                    urlsPromises.push(getDownloadURL(item));  // Store promises for URLs
+                });
+
+                // Once all URLs are resolved, set URL state and map to filenames
+                Promise.all(urlsPromises).then((urls) => {
+                    setURL(urls);
+                });
+            });
         }).catch((error) => {
-            // Uh-oh, an error occurred!
+
         });
     }
 
@@ -135,33 +168,44 @@ export default function Upload() {
 
             <br/>
             <table>
-                <tr>
-                    <th>Filename</th>
-                    <th>Share</th>
-                    <th>Size</th>
-                    <th>Delete</th>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Share</th>
+                        <th>Size</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {subDirs && subDirs.map((subDir, index) => {
+                        return (
+                            <tr key={index}>
+                                <td>{subDir} (subdirectory)</td>
+                                <td></td>
+                                <td>null</td>
+                                <td></td>
+                            </tr>
+                        );
+                    })}
 
-
-                {subDirs && subDirs.map((subDir) => {
-                    return (
-                        <tr>{subDir} (subdirectory)</tr>
-                    );
-                })}
-
-
-                {URL.map((url, index) => {
-                    return (
-                        <tr key={index}>
-                            <td><a href={url}>{filename[index]}</a></td>
-                            <td> <button onClick={() => {navigator.clipboard.writeText(url)}}>copy</button></td>
-                            <td style={{textAlign: "right"}}>{size[index]}</td>
-                            <td style={{color: "red", textAlign: "center"}}>
-                                <button onClick={() => deleteFile(ref(storage, `users/${UID + "/" + filename[index]}`))}>[X]</button>
-                            </td>
-                        </tr>
-                    );
-                })}
+                    {URL.map((url, index) => {
+                        return (
+                            <tr key={index}>
+                                <td><a href={url}>{filename[index]}</a></td>
+                                <td>
+                                    <button onClick={() => {
+                                        navigator.clipboard.writeText(url)
+                                    }}>copy
+                                    </button>
+                                </td>
+                                <td style={{textAlign: "right"}}>{size[index]}</td>
+                                <td style={{color: "red", textAlign: "center"}}>
+                                    <button onClick={() => deleteFile(filename[index])}>[X]</button>
+                                </td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
             </table>
         </>
     )
