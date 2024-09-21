@@ -154,6 +154,27 @@ export default function Upload() {
         });
     }
 
+    function deleteDir(filenameElement) {
+        const dir = ref(storage,`users/${UID}/${filenameElement}/`);
+        const dir2 = ref(storage,`users/${UID}/`);
+        const subdir = [];
+
+        listAll(dir).then((response) => {
+            response.items.forEach((folderRef) => {
+                deleteObject(folderRef)
+            })
+            //300ms delay since firebase storage is wack af
+        }).then(() => new Promise(resolve => setTimeout(resolve, 300)).then(() => {
+            listAll(dir2).then((response) => {
+                const urls = response.prefixes.map((folderRef) => folderRef.name);
+                setSubDirs(urls);
+            }).then(() => {
+
+            });
+
+        }));
+    }
+
     return (
         <>
             <Header />
@@ -183,7 +204,9 @@ export default function Upload() {
                                 <td>{subDir} (subdirectory)</td>
                                 <td></td>
                                 <td>null</td>
-                                <td></td>
+                                <td style={{color: "red", textAlign: "center"}}>
+                                    <button onClick={() => deleteDir(subDir)}>[X]</button>
+                                </td>
                             </tr>
                         );
                     })}
