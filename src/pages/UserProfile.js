@@ -1,10 +1,9 @@
-// components/UserProfile.js
+// pages/UserProfile.js
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { db, useAuth, uploadProfile } from '../firebase.js';
 import { doc, getDoc } from 'firebase/firestore';
 import Header from '../components/Header.js';
-import Level from '../components/Level.js';
 
 export default function UserProfile() {
   const { currentUser, userData } = useAuth();
@@ -21,9 +20,19 @@ export default function UserProfile() {
   const [loading, setLoading] = useState(false);
   // placeholder image if no image given yet
   const [photoURL, setPhotoURL] = useState("https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541");
+  const [userLoading, setUserLoading] = useState(true); // Added loading state for currentUser
 
+  // Fetch the user profile when the component loads
   useEffect(() => {
     const fetchUserProfile = async () => {
+      // Wait until currentUser is fetched
+      if (!currentUser) {
+        setUserLoading(true);
+        return;
+      }
+
+      setUserLoading(false);
+
       if (userid === currentUser?.uid && userData) {
         // If the current user is viewing their profile
         setUser({
@@ -35,7 +44,7 @@ export default function UserProfile() {
         });
         setIsCurrentUser(true);
       } else {
-        // Get another user profile
+        // Get another user's profile
         const userDoc = await getDoc(doc(db, "users", userid));
         if (userDoc.exists()) {
           const userData = userDoc.data();
@@ -56,6 +65,7 @@ export default function UserProfile() {
     fetchUserProfile();
   }, [userid, currentUser, userData]);
 
+  // Function to handle profile picture upload
   function handleChange(e) {
     if(e.target.files[0]) {
       setPhoto(e.target.files[0])
@@ -63,17 +73,20 @@ export default function UserProfile() {
   }
 
   function handleUploadClick() {
-    // Logic for handling profile picture upload
-    console.log('clicked profile upload');
-    uploadProfile(photo,currentUser,setLoading);
+    uploadProfile(photo, currentUser, setLoading);
   }
 
-  // updates photoURL
+  // Update the profile picture URL
   useEffect(() => {
-    if (currentUser && currentUser.photoURL) {
-      setPhotoURL(currentUser.photoURL)
+    if (!userLoading && currentUser && currentUser.photoURL) {
+      setPhotoURL(currentUser.photoURL);
     }
-  }, [currentUser]);
+  }, [currentUser, userLoading]);
+
+  // Render a loading spinner while fetching user data
+  if (userLoading) {
+    return <div>Loading profile...</div>;
+  }
 
   return (
     <>

@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 
 // do not post this
 const firebaseConfig = {
-  
 };
 
 const app = initializeApp(firebaseConfig);

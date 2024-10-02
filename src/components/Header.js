@@ -22,8 +22,7 @@ export default function Header() {
     <div className="headerbar">
       <a href="/home">YIYAPNP</a>
       <a href="/home">Home</a>
-      <a href="/calendar">Calendar</a>
-      <a href="/chat">Chat</a>
+
       {/** if logged out display login/sign up buttons */}
       {!isCurrentUser && (
         <>
@@ -39,10 +38,11 @@ export default function Header() {
       {/** if logged in display profile and sign out */}
       {isCurrentUser && (
         <>
-          <a
-            className="header-right"
-            href={`/profile/${currentUser.uid}`}
-          >
+          <a href="/calendar">Calendar</a>
+          <a href="/chat">Chat</a>
+          <a href="/notes">My notes</a>
+          <a href="/files">My files</a>
+          <a className="header-right" href={`/profile/${currentUser.uid}`}>
             <img src={photoURL} alt="avatar" className="mini-avatar" />
           </a>
           {/** not yet implemented */}
