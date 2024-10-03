@@ -199,3 +199,20 @@ body {
   height: auto;
   border-radius: 10px;
 }
+
+/* profile styling */
+
+.profile-container {
+  padding: 10px;
+}
+
+.edit-profile-container {
+  background-color: var(--maincoloralt);
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 10px;
+}
+
+.profile-bio-box {
+  min-width: 400px;
+}

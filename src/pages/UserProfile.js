@@ -1,13 +1,16 @@
 // pages/UserProfile.js
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { db, useAuth, uploadProfile } from '../firebase.js';
+import { db, useAuth } from '../firebase.js';
 import { doc, getDoc } from 'firebase/firestore';
 import Header from '../components/Header.js';
+import EditProfile from '../components/EditProfile';
 
 export default function UserProfile() {
   const { currentUser, userData } = useAuth();
   const { userid } = useParams();
+
+  // States
   const [user, setUser] = useState({
     firstName: '',
     lastName: '',
@@ -16,16 +19,12 @@ export default function UserProfile() {
     level: ''
   });
   const [isCurrentUser, setIsCurrentUser] = useState(false);
-  const [photo, setPhoto] = useState(null);
-  const [loading, setLoading] = useState(false);
-  // placeholder image if no image given yet
   const [photoURL, setPhotoURL] = useState("https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541");
   const [userLoading, setUserLoading] = useState(true); // Added loading state for currentUser
 
   // Fetch the user profile when the component loads
   useEffect(() => {
     const fetchUserProfile = async () => {
-      // Wait until currentUser is fetched
       if (!currentUser) {
         setUserLoading(true);
         return;
@@ -65,17 +64,6 @@ export default function UserProfile() {
     fetchUserProfile();
   }, [userid, currentUser, userData]);
 
-  // Function to handle profile picture upload
-  function handleChange(e) {
-    if(e.target.files[0]) {
-      setPhoto(e.target.files[0])
-    }
-  }
-
-  function handleUploadClick() {
-    uploadProfile(photo, currentUser, setLoading);
-  }
-
   // Update the profile picture URL
   useEffect(() => {
     if (!userLoading && currentUser && currentUser.photoURL) {
@@ -91,33 +79,28 @@ export default function UserProfile() {
   return (
     <>
       <Header />
-      <div>
-        <h2>User Profile</h2>
-        {/** Placeholder image will only be seen if no image is loaded */}
+      <div className='profile-container'>
+        <h2>Profile</h2>
         <img src={photoURL} className='avatar' alt='Profile Avatar' />
-        <p>Name: {user.firstName} {user.lastName}</p>
-        <p>Email: {user.email}</p>
-        <p>Bio: {user.bio}</p>
+        <h3>{user.firstName} {user.lastName}</h3>
+        <p>{user.email}</p>
+        <p>{user.bio}</p>
         <p>Level: {user.level}</p>
       </div>
 
-      {/** If other user and logged in */}
+      {/** If other user AND logged in */}
       {currentUser && !isCurrentUser && (
         <div>
           <button>Follow</button>
           <button>Message</button>
-          {/**<Level />*/}
+          <button>Give a level</button>
         </div>
       )}
 
-      {/** if current user is logged in */}
+      {/** If current user is viewing their own profile */}
       {isCurrentUser && (
-        <div>
-          <input type="file" onChange={handleChange} />
-          <button disabled={loading || !photo} onClick={handleUploadClick}>Upload profile picture</button>
-        </div>
+        <EditProfile currentUser={currentUser} userData={userData} />
       )}
-      
     </>
   );
 }
