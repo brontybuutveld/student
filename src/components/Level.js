@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { db, useAuth } from "../firebase";
 import Bronze from './images/bronze.png';
 import Silver from './images/silver.png';
 import Gold from './images/gold.png';
 import Platinum from './images/platinum.png';
 
-export default function Level() {
+export default function Level({ userId }) { // userId as a prop to identify the user
+  const { currentUser } = useAuth();
+
   // Define the levels based on star ratings
   const levelImages = {
     1: Bronze,
@@ -18,11 +22,26 @@ export default function Level() {
   const [selectedRating, setSelectedRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [ratingMessage, setRatingMessage] = useState("");
-  
+
   // Submit rating handler
-  const submitRating = () => {
-    if (selectedRating > 0) {
-      setRatingMessage(`Thank you for rating ${selectedRating} star(s)!`);
+  const submitRating = async () => {
+    if (selectedRating > 0 && currentUser) {
+      try {
+        const userRef = doc(db, "users", userId); 
+
+        const userDoc = await getDoc(userRef);
+        const userData = userDoc.data();
+        
+        // Update the user's level with the new rating
+        await updateDoc(userRef, {
+          level: selectedRating // Update the level with the new rating
+        });
+
+        setRatingMessage(`Thank you for rating ${selectedRating} star(s)!`);
+      } catch (error) {
+        console.error("Error saving rating:", error);
+        setRatingMessage("Error saving your rating. Please try again.");
+      }
     } else {
       setRatingMessage("Please select a star rating!");
     }
@@ -59,35 +78,36 @@ export default function Level() {
       </span>
     ));
   };
-  
 
   return (
     <>
-      <header>
-        <h1>Rate the Student Profile</h1>
-      </header>
+      <div className="level-body">
+        <header className="level-header">
+          <h1>Rate the Student Profile</h1>
+        </header>
 
-      <section className="star-rating-section">
-        <div className="star-rating">
-          {renderStars()}
-        </div>
-        <button type="button" onClick={submitRating}>
-          Submit Rating
-        </button>
-        <p id="rating-message">{ratingMessage}</p>
-      </section>
+        <section className="star-rating-section">
+          <div className="star-rating">
+            {renderStars()}
+          </div>
+          <button type="button" onClick={submitRating}>
+            Submit Rating
+          </button>
+          <p id="rating-message">{ratingMessage}</p>
+        </section>
 
-      <section className="level-section">
-        <h3>Student Level Based on Rating:</h3>
-        <div id="level-display">
-          {selectedRating > 0 && (
-            <img
-              src={levelImages[selectedRating]}
-              alt={`Level ${selectedRating} Image`}
-            />
-          )}
-        </div>
-      </section>
+        <section className="level-section">
+          <h3>Student Level Based on Rating:</h3>
+          <div id="level-display">
+            {selectedRating > 0 && (
+              <img
+                src={levelImages[selectedRating]}
+                alt={`Level ${selectedRating} Image`}
+              />
+            )}
+          </div>
+        </section>
+      </div>
     </>
   );
 }

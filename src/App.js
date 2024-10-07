@@ -1,6 +1,5 @@
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Home from './pages/Home';
-import Account from './pages/Account';
 import Calendar from './pages/Calendar';
 import Chat from './pages/Chat';
 import Login from './pages/Login';
@@ -23,7 +22,6 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/profile/:userid" element={<UserProfile />} />
                     <Route path="/upload" element={<Upload />} />
-                    {/** for testing */}
                     <Route path="/navpage" element={<UserHome />} />
                 </Routes>
             </BrowserRouter>

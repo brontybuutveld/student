@@ -2,8 +2,6 @@ import Header from "../components/Header.js";
 
 /** this will be intro page at start of website (user not logged in) */
 
-/** redirect to navpage immediately if logged in */
-
 export default function Home() {
   return (
     <>

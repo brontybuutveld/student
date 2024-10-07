@@ -203,29 +203,74 @@ body {
 /* profile styling */
 
 .profile-container {
+  background-color: var(--maincolor);
+  color: var(--black);
+  height: 100vh;
+}
+
+.profile-main-box {
+  width: 100vw;
+  display: flex;
+  justify-content: space-around;
+}
+
+.profile-box {
+  background-color: rgb(153, 153, 177);
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin-top: 50px;
+  box-shadow: 5px 5px 5px 5px rgb(0, 0, 0);
+  border-radius: 10px;
+}
+
+.profile-top {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+  height: 12vh;
+  margin: 1rem;
+}
+
+.profile-button-box {
+  background-color: var(--white);
+  box-shadow: 5px 5px 5px 5px rgb(0, 0, 0);
+  border-radius: 10px;
+  width: 40%;
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.profile-button {
+  margin: 10px 6vw;
+}
+
+.profile-info {
   padding: 10px;
+  margin: 10px;
+  background-color: var(--white);
+  border-radius: 10px;
 }
 
 .edit-profile-container {
   background-color: var(--maincoloralt);
+  color: var(--white);
   padding: 1rem;
   margin: 1rem;
   border-radius: 10px;
-}
-
-.profile-bio-box {
-  min-width: 400px;
-}
+  box-shadow: 5px 5px 5px 5px rgb(106, 106, 124);
 }
 
 /* General Styling */
-body {
+.level-body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     text-align: center;
 }
 
-header {
+.level-header {
     background-color: #4CAF50;
     color: white;
     padding: 1em 0;
