@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth, handleSignOut } from "../firebase.js";
+import { useAuth, handleSignOut } from "../firebase";
 
 export default function Header() {
   const { currentUser } = useAuth();

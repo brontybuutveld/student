@@ -48,30 +48,33 @@ export default function UserProfile() {
       if (userid === currentUser?.uid && userData) {
         // If the current user is viewing their profile
         setUser({
-          firstName: userData.firstName || "N/A",
-          lastName: userData.lastName || "N/A",
-          email: userData.email || "N/A",
+          firstName: userData.firstName || "No first name",
+          lastName: userData.lastName || "No last name",
+          email: userData.email || "No email provided",
           bio: userData.bio || "No bio available",
           level: userData.level || "Unknown",
         });
+
         setIsCurrentUser(true);
       } else {
         // Get another user's profile
         const userDoc = await getDoc(doc(db, "users", userid));
+
         if (userDoc.exists()) {
           const userData = userDoc.data();
+
           setUser({
-            firstName: userData.firstName || "N/A",
-            lastName: userData.lastName || "N/A",
-            email: userData.email || "N/A",
-            bio: userData.bio || "No bio available",
+            firstName: userData.firstName || "Unknown",
+            lastName: userData.lastName || "Unknown",
+            email: userData.email || "Unknown",
+            bio: userData.bio || "Unknown",
             level: userData.level || "Unknown",
           });
         } else {
           setUser({
-            firstName: "unknown",
-            lastName: "unknown",
-            email: "unknown",
+            firstName: "Error getting user",
+            lastName: "",
+            email: "",
             bio: "",
             level: "",
           });
@@ -104,10 +107,12 @@ export default function UserProfile() {
           <div className="profile-box">
             <div className="profile-top">
               <img src={photoURL} className="avatar" alt="Profile Avatar" />
+
               <h3>
                 {user.firstName} {user.lastName}
               </h3>
             </div>
+
             <div className="profile-info">
               <p>{user.email}</p>
               <p>Level {user.level}</p>
@@ -128,12 +133,14 @@ export default function UserProfile() {
                 <button className="btn btn-primary profile-button">
                   Message
                 </button>
+
                 <button
                   className="btn btn-primary profile-button"
                   onClick={handleLevelToggle}
                 >
                   Give a level
                 </button>
+
                 {showLevel && <Level userId={userid} />}
               </>
             )}
@@ -141,10 +148,16 @@ export default function UserProfile() {
             {/** If current user is viewing their own profile */}
             {isCurrentUser && (
               <>
+                <a
+                  className="btn btn-primary profile-button"
+                  href="/searchprofile"
+                >Search for other users</a>
                 <button
                   className="btn btn-primary profile-button"
                   onClick={handleEditProfileToggle}
                 >
+                  
+                  {/** Change display text if edit is open */}
                   {showProfileEdit ? "Hide Edit Profile" : "Edit Profile"}
                 </button>
                 {showProfileEdit && (

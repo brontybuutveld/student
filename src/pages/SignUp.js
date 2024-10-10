@@ -9,6 +9,7 @@ import Header from "../components/Header.js";
 import { Link } from "react-router-dom";
 import { Form, Button, Card, Col, Row } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate } from "react-router-dom";
 
 export default function SignUp() {
   //Form input state vairables
@@ -25,6 +26,21 @@ export default function SignUp() {
   const [emailError, setEmailError] = useState("");
   const [validated, setValidated] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
+
+  const navigate = useNavigate();
+
+  // Prevent signed in users from accessing
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Redirect to home
+        navigate("/navpage");
+      }
+    });
+
+    // Cleanup listener
+    return () => unsubscribe();
+  }, [navigate]);
 
   //Monitor authentication state
   useEffect(() => {
@@ -73,7 +89,7 @@ export default function SignUp() {
         firstName: registerFirst,
         lastName: registerLast,
         email: registerEmail,
-        bio: "No bio available", 
+        bio: "", 
         level: 1, 
       });
       

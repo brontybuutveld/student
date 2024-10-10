@@ -1,12 +1,28 @@
-// pages/EditProfile.js
-import React, { useState } from 'react';
-import { db, uploadProfile } from '../firebase.js';
-import { doc, updateDoc } from 'firebase/firestore';
+import React, { useState } from "react";
+import { db, storage, uploadProfile } from "../firebase.js";
+import { doc, updateDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { updateProfile } from "firebase/auth";
 
 export default function EditProfile({ currentUser, userData }) {
+  // storage file upload for profile
+  async function uploadProfile(file, currentUser, setLoading) {
+    // reference to file
+    const fileRef = ref(storage, `profiles/${currentUser.uid}${file.name}`);
+    setLoading(true);
+    const snapshot = await uploadBytes(fileRef, file);
+
+    const photoURL = await getDownloadURL(fileRef);
+
+    updateProfile(currentUser, { photoURL: photoURL });
+
+    setLoading(false);
+    alert("File succefully uploaded.");
+  }
+
   const [photo, setPhoto] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [bio, setBio] = useState(userData?.bio || ''); // Initialize with current bio
+  const [bio, setBio] = useState(userData?.bio || ""); // Initialize with current bio
 
   // Handle profile picture change
   function handleChange(e) {
@@ -23,7 +39,7 @@ export default function EditProfile({ currentUser, userData }) {
   // Handle bio update
   async function handleBioClick() {
     if (!bio.trim()) {
-      alert('Bio cannot be empty.');
+      alert("Bio cannot be empty.");
       return;
     }
 
@@ -32,23 +48,32 @@ export default function EditProfile({ currentUser, userData }) {
       await updateDoc(userDocRef, {
         bio: bio,
       });
-      alert('Bio updated successfully.');
+      alert("Bio updated successfully.");
     } catch (error) {
       console.error("Error updating bio: ", error);
-      alert('Failed to update bio.');
+      alert("Failed to update bio.");
     }
   }
 
   return (
-    <div className='edit-profile-container'>
+    <div className="edit-profile-container">
       <p>Update your avatar</p>
       <input type="file" onChange={handleChange} />
-      <button disabled={loading || !photo} onClick={handleUploadClick}>Upload profile picture</button>
+      <button disabled={loading || !photo} onClick={handleUploadClick}>
+        Upload profile picture
+      </button>
 
       <div>
         <p>Update your bio</p>
-        <input className="profile-bio-box" type="text" value={bio} onChange={(e) => setBio(e.target.value)} />
-        <button disabled={loading} onClick={handleBioClick}>Submit bio</button>
+        <input
+          className="profile-bio-box"
+          type="text"
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+        />
+        <button disabled={loading} onClick={handleBioClick}>
+          Submit bio
+        </button>
       </div>
     </div>
   );

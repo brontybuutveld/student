@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc, FieldValue } from "firebase/firestore";
 import { db, useAuth } from "../firebase";
 import Bronze from './images/bronze.png';
 import Silver from './images/silver.png';
@@ -32,9 +32,8 @@ export default function Level({ userId }) { // userId as a prop to identify the 
         const userDoc = await getDoc(userRef);
         const userData = userDoc.data();
         
-        // Update the user's level with the new rating
         await updateDoc(userRef, {
-          level: selectedRating // Update the level with the new rating
+          level: FieldValue.increment(selectedRating) // increment the rating
         });
 
         setRatingMessage(`Thank you for rating ${selectedRating} star(s)!`);
