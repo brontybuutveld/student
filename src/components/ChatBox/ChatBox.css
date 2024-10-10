@@ -1,0 +1,138 @@
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background-color: #f1f5ff;
+}
+
+.chat-user {
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #c6c6c6;
+}
+
+.chat-user img {
+  width: 25px;
+  border-radius: 50%;
+}
+
+.chat-user p {
+  flex: 1;
+  font-weight: 500;
+  font-size: 20px;
+  color: #393939;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.chat-user img:first-child {
+  width: 38px;
+  aspect-ratio: 1/1;
+}
+
+.green-dot {
+  width: 15px !important;
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
+  background: white;
+  border-top: 1px solid #c6c6c6;
+  flex-shrink: 0;
+}
+
+.chat-input img {
+  width: 30px;
+  cursor: pointer;
+}
+
+.chat-input label {
+  display: flex;
+}
+
+.chat-input label img {
+  width: 22px;
+}
+
+.chat-input input {
+  flex: 1;
+  border: none;
+  outline: none;
+}
+
+.chat-message {
+  flex-grow: 1;
+  padding: 10px 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column-reverse;
+  margin-bottom: 10px;
+}
+
+.s-message div img,
+.r-message div img {
+  width: 40px;
+  aspect-ratio: 1/1;
+  border-radius: 50px;
+}
+
+.s-message,
+.r-message {
+  max-width: calc(100% - 320px);
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.r-message {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+  padding: 0px 15px;
+  margin-left: auto;
+}
+
+.s-message {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 5px;
+  padding: 0px 15px;
+  margin-right: auto;
+}
+
+.s-message .msg {
+  background-color: #e5e5e5;
+  color: black;
+  border-radius: 8px 8px 0px 8px;
+  max-width: calc(100% - 350px);
+  word-wrap: break-word;
+}
+
+.r-message .msg {
+  color: white;
+  background-color: #077eff;
+  border-radius: 8px 8px 8px 0px;
+  max-width: calc(100% - 350px);
+  word-wrap: break-word;
+}
+
+.msg {
+  padding: 8px;
+  font-size: 11px;
+  font-weight: 300;
+  margin-bottom: 30px;
+}
+
+.pic1-img {
+  max-width: 230px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+}

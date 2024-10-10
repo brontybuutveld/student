@@ -9,6 +9,8 @@ import Header from "../components/Header.js";
 import { Link } from "react-router-dom";
 import { Form, Button, Card, Col, Row } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SignUp() {
   //Form input state vairables
@@ -73,10 +75,15 @@ export default function SignUp() {
         firstName: registerFirst,
         lastName: registerLast,
         email: registerEmail,
-        bio: "No bio available", 
-        level: 1, 
+        bio: "No bio available",
+        level: 1,
+        lastSeen: Date.now(),
       });
-      
+
+      // Initialize chat data for the user
+      await setDoc(doc(db, "chats", userCredential.user.uid), {
+        chatData: [],
+      });
 
       setIsRegistered(true); //Flag user as succesfully registered
     } catch (error) {
@@ -84,6 +91,7 @@ export default function SignUp() {
         setEmailError("This email is already in use");
       }
       console.log(error.message);
+      toast.error(error.code);
     }
   };
 

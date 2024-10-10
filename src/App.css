@@ -3,10 +3,12 @@ li {
   margin-left: 3px;
 }
 
-a:link, a:visited, a:active, a:hover {
+a:link,
+a:visited,
+a:active,
+a:hover {
   color: lightgrey;
   text-decoration: none;
-
 }
 
 footer {
@@ -18,7 +20,9 @@ footer {
   border: 3px solid green;
 }
 
-table, th, td {
+table,
+th,
+td {
   border: 1px solid white;
 }
 
@@ -74,7 +78,7 @@ body {
   margin: 10px;
   width: 16rem;
   min-height: 20rem;
-  float:left;
+  float: left;
   border-radius: 10px;
   box-shadow: 5px 5px 5px 5px rgb(187, 187, 187);
 }

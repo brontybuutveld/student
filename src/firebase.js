@@ -1,12 +1,18 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged , updateProfile } from "firebase/auth";
+import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { getStorage, uploadBytes, ref, getDownloadURL } from "firebase/storage";
 import { getFirestore, getDoc, doc } from "firebase/firestore";
 import { useState, useEffect } from "react";
 
 // change later
 const firebaseConfig = {
-
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
@@ -47,7 +53,7 @@ export async function uploadProfile(file, currentUser, setLoading) {
 
   const photoURL = await getDownloadURL(fileRef);
 
-  updateProfile(currentUser, {photoURL: photoURL});
+  updateProfile(currentUser, { photoURL: photoURL });
 
   setLoading(false);
   alert("File succefully uploaded.");
