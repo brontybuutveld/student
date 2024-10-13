@@ -10,79 +10,91 @@ import React, { useState } from "react";
 import { db } from "../firebase.js";
 import Header from "../components/Header.js";
 
+// added for testing
+export const firebaseFunctions = {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+};
+
 const SearchProfile = () => {
   const [searchName, setSearchName] = useState("");
   const [results, setResults] = useState([]);
   const [isEmptySearch, setIsEmptySearch] = useState(false);
+  const [userLoading, setUserLoading] = useState(false);
 
   const SearchForUser = async (searchName) => {
     if (!searchName.trim()) {
       console.log("Empty search, returning.");
+      setUserLoading(false); // Ensure loading is set to false
+      setIsEmptySearch(true);
       return [];
     }
 
-    searchName = searchName.trim();
+    setUserLoading(true);
+    setIsEmptySearch(false); // Reset this at the start of search
 
-    // Get users reference
-    const usersRef = collection(db, "users");
-
-    // Use prefix matching with >= and <=
-    const startName = searchName;
-    const endName = searchName + '\uf8ff'; // highest unicode character
-
-    // Queries for firstName and lastName
-    const firstNameQuery = query(
-      usersRef,
-      where("firstName", ">=", startName),
-      where("firstName", "<=", endName)
-    );
-    const lastNameQuery = query(
-      usersRef,
-      where("lastName", ">=", startName),
-      where("lastName", "<=", endName)
-    );
-
-    const results = [];
-
-    // Use multiple queries for fetching based on first name, last name, id
     try {
-      // firstName query
-      const firstNameSnapshot = await getDocs(firstNameQuery);
+      searchName = searchName.trim();
+      const usersRef = firebaseFunctions.collection(db, "users");
+
+      const startName = searchName;
+      const endName = searchName + "\uf8ff";
+
+      const firstNameQuery = firebaseFunctions.query(
+        usersRef,
+        firebaseFunctions.where("firstName", ">=", startName),
+        firebaseFunctions.where("firstName", "<=", endName)
+      );
+
+      const lastNameQuery = firebaseFunctions.query(
+        usersRef,
+        firebaseFunctions.where("lastName", ">=", startName),
+        firebaseFunctions.where("lastName", "<=", endName)
+      );
+
+      const results = [];
+
+      const firstNameSnapshot = await firebaseFunctions.getDocs(firstNameQuery);
+      console.log("First name query results:", firstNameSnapshot.size);
+
       firstNameSnapshot.forEach((doc) => {
+        console.log("Found doc:", doc.id, doc.data());
         results.push({ id: doc.id, ...doc.data() });
       });
 
-      // lastName query
-      const lastNameSnapshot = await getDocs(lastNameQuery);
+      const lastNameSnapshot = await firebaseFunctions.getDocs(lastNameQuery);
       lastNameSnapshot.forEach((doc) => {
-        // Check for duplicates
         if (!results.some((user) => user.id === doc.id)) {
           results.push({ id: doc.id, ...doc.data() });
         }
       });
 
-      // Fetch user by ID (document name)
-      const userByIdRef = doc(db, "users", searchName);
-      const userByIdSnapshot = await getDoc(userByIdRef);
-      if (userByIdSnapshot.exists()) {
-        // Check for duplicates
-        if (!results.some((user) => user.id === userByIdSnapshot.id)) {
-          results.push({ id: userByIdSnapshot.id, ...userByIdSnapshot.data() });
-        }
+      const userByIdRef = firebaseFunctions.doc(db, "users", searchName);
+      const userByIdSnapshot = await firebaseFunctions.getDoc(userByIdRef);
+      if (
+        userByIdSnapshot.exists() &&
+        !results.some((user) => user.id === userByIdSnapshot.id)
+      ) {
+        results.push({ id: userByIdSnapshot.id, ...userByIdSnapshot.data() });
       }
 
-      console.log("Results:", results);
+      setUserLoading(false);
 
-      // Check if results is empty
       if (results.length === 0) {
         setIsEmptySearch(true);
       } else {
         setIsEmptySearch(false);
+        setResults(results);
       }
 
       return results;
     } catch (error) {
       console.error("Error searching for user:", error);
+      setUserLoading(false);
       setIsEmptySearch(true);
       return [];
     }
@@ -118,19 +130,24 @@ const SearchProfile = () => {
           {/** Search results */}
           <div>
             <ul>
-              {/** If no results found */}
-              {isEmptySearch && (
+              {userLoading && <p>Loading...</p>}
+              {!userLoading && isEmptySearch && (
                 <p>No users found. Try checking for spelling errors.</p>
               )}
-
-              {results.map((user) => (
-                // link to user profile
-                <li key={user.id}>
-                  <a href={`/profile/${user.id}`}>
-                    {user.firstName} {user.lastName}
-                  </a>
-                </li>
-              ))}
+              {!userLoading &&
+                results.map((user) => (
+                  <li key={user.id}>
+                    <a
+                      className="btn search-result"
+                      href={`/profile/${user.id}`}
+                    >
+                      <p>
+                        {user.firstName} {user.lastName}
+                      </p>
+                      <p>Level {user.level}</p>
+                    </a>
+                  </li>
+                ))}
             </ul>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import Header from "../components/Header";
-import placeholder from "../components/placeholder.png";
+import placeholder from "../components/images/placeholder.png";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";

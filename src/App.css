@@ -37,6 +37,12 @@ a:hover {
   text-decoration: none;
 }
 
+button, input[type="submit"], input[type="reset"] {
+	color: inherit;
+	border: none;
+	outline: inherit;
+}
+
 footer {
   background-color: rgb(50, 50, 50);
   color: white;
@@ -270,6 +276,12 @@ body {
   box-shadow: 5px 5px 5px 5px rgb(106, 106, 124);
 }
 
+.profile-copy-icon {
+  width: 20px;
+  padding: 0 3px 3px 0;
+  
+}
+
 /* level styling */
 .level-body {
   font-family: Arial, sans-serif;
@@ -334,12 +346,6 @@ section {
   margin: 1vh;
 }
 
-.search-main-box li {
-  background-color: var(--white);
-  margin: auto;
-  width: 10vw;
-}
-
 .search-bar {
   display: flex;
   justify-content: space-between;
@@ -350,3 +356,20 @@ section {
   padding: 1vh;
 }
 
+.search-result {
+  background-color: var(--white);
+  color: var(--black);
+  margin: 1vh auto;
+  width: 16vw;
+  padding: 0.75rem 0;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.search-result:hover {
+  background-color: var(--accentcolor);
+}
+
+.search-result p {
+  margin: 0 0.3rem;
+}

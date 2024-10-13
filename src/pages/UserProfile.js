@@ -8,6 +8,8 @@ import EditProfile from "../components/EditProfile";
 import Level from "../components/Level.js";
 
 export default function UserProfile() {
+  const copyIcon =
+    "https://icon-library.com/images/copy-to-clipboard-icon/copy-to-clipboard-icon-1.jpg";
   const { currentUser, userData } = useAuth();
   const { userid } = useParams();
 
@@ -35,6 +37,17 @@ export default function UserProfile() {
   const handleLevelToggle = () => {
     setShowLevel((prev) => !prev);
   };
+
+  // Copy current user's ID
+  const copyUID = () => {
+    try {
+      navigator.clipboard.writeText(userid);
+      alert("Copied User's ID to Clipboard.");
+    } catch {
+      console.log("Copy to clipboard error.");
+    }
+  };
+
   // Fetch the user profile when the component loads
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -111,6 +124,9 @@ export default function UserProfile() {
               <h3>
                 {user.firstName} {user.lastName}
               </h3>
+
+              {/** copy uid to clipboard */}
+                <img className="profile-copy-icon" src={copyIcon} onClick={copyUID} />
             </div>
 
             <div className="profile-info">
@@ -151,12 +167,13 @@ export default function UserProfile() {
                 <a
                   className="btn btn-primary profile-button"
                   href="/searchprofile"
-                >Search for other users</a>
+                >
+                  Search for other users
+                </a>
                 <button
                   className="btn btn-primary profile-button"
                   onClick={handleEditProfileToggle}
                 >
-                  
                   {/** Change display text if edit is open */}
                   {showProfileEdit ? "Hide Edit Profile" : "Edit Profile"}
                 </button>
