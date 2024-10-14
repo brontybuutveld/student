@@ -41,7 +41,7 @@ export default function Header() {
           <a href="/calendar">Calendar</a>
           <a href="/chat">Chat</a>
           <a href="/notes">My notes</a>
-          <a href="/files">My files</a>
+          <a href="/upload">My files</a>
           <a className="header-right" href={`/profile/${currentUser.uid}`}>
             <img src={photoURL} alt="avatar" className="mini-avatar" />
           </a>
