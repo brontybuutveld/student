@@ -5,9 +5,18 @@ import { getFirestore, getDoc, doc } from "firebase/firestore";
 import { useState, useEffect } from "react";
 
 // change later
-const firebaseConfig = {
 
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyDMB1vuWHk0BkeYvoSg6oQI7bJBN8F99bg",
+    authDomain: "student-7c497.firebaseapp.com",
+    databaseURL: "https://student-7c497-default-rtdb.firebaseio.com",
+    projectId: "student-7c497",
+    storageBucket: "student-7c497.appspot.com",
+    messagingSenderId: "392653339134",
+    appId: "1:392653339134:web:ea503019708177bafee8af"
+  };
+  
+
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);

@@ -1,0 +1,18 @@
+/* App.css */
+body.light {
+    background-color: #ffffff;
+    color: #000000;
+  }
+  
+  body.dark {
+    background-color: #121212;
+    color: #ffffff;
+  }
+  
+  button {
+    padding: 10px 20px;
+    margin: 20px;
+    cursor: pointer;
+
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
