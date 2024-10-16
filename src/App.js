@@ -8,6 +8,7 @@ import SignUp from './pages/SignUp';
 import UserProfile from "./pages/UserProfile";
 import UserHome from "./pages/UserHome";
 import Upload from "./pages/Upload";
+import { StickyNote } from "./components/Theme_StickyNote/StickyNote";
 
 function App() {
     return (
@@ -24,8 +25,10 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/profile/:userid" element={<UserProfile />} />
                     <Route path="/upload" element={<Upload />} />
-                    {/** for testing */}
                     <Route path="/navpage" element={<UserHome />} />
+
+                     {/** route to sticky notes */}
+                     <Route path="/notes" element={<StickyNote />} />
                 </Routes>
             </BrowserRouter>
         </div>
