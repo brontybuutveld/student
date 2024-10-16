@@ -93,3 +93,8 @@ body {
   height: auto;
   border-radius: 10px;
 }
+
+.loading {
+  font-size: 50px;
+  color: white;
+}

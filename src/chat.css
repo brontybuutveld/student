@@ -11,3 +11,30 @@
 ::-webkit-scrollbar {
   display: none;
 }
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+.loading-text {
+  font-size: 24px;
+  color: #3498db;
+  font-weight: bold;
+  text-align: center;
+  animation: fadeIn 1s ease-in-out infinite;
+}
+
+/* Add a simple animation to the text */
+@keyframes fadeIn {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

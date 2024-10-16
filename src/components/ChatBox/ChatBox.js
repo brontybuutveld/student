@@ -1,68 +1,70 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./ChatBox.css";
+import { AppContext } from "../../context/AppContext";
 
 const ChatBox = () => {
-  return (
-    <div>
-      <div className="chat-box">
-        <div className="chat-user">
-          <img src="/assets/profile_martin.png" alt="Profile Icon" />
-          <p>
-            Richard Sandford
-            <img
-              src="/assets/green_dot.png"
-              alt="Active status"
-              className="green-dot"
-            />
-          </p>
-          <img src="/assets/help_icon.png" alt="Profile Icon" />
-        </div>
+  const { chatUser, messages, chatVisible } = useContext(AppContext);
+
+  // Log to check if chat user details are available
+  console.log("Chat user details:", chatUser);
+
+  return chatUser ? (
+    <div className={`chat-box ${chatVisible ? "" : "hidden"}`}>
+      {/* Header section showing the user's avatar and name */}
+      <div className="chat-user">
+        <img
+          src={
+            chatUser ? chatUser.userData.avatar : "/assets/default_avatar.png"
+          }
+          alt="User Avatar"
+        />
+        <p>
+          {chatUser
+            ? `${chatUser.userData.firstName} ${chatUser.userData.lastName}`
+            : "No User Selected"}
+          {Date.now() - chatUser.userData.lastSeen <= 70000 ? (
+            <img className="dot" src="/assets/green_dot.png" alt="" />
+          ) : null}
+        </p>
       </div>
-      <div className="chat-message">
-        <div className="s-message">
-          <p className="msg">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua
-          </p>
-          <div>
-            <img src="/assets/profile_martin.png" alt="Profile Icon" />
-            <p>2:30 PM</p>
+
+      {/* Messages section displaying the conversation */}
+      <div className="chat-msg">
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={msg.sId === chatUser.rId ? "r-msg" : "s-msg"}
+          >
+            <p className="msg">{msg.text}</p>
+            <div>
+              <img
+                src={
+                  msg.sId === chatUser.rId
+                    ? chatUser.userData.avatar
+                    : "/assets/default_avatar.png"
+                }
+                alt="Profile Icon"
+              />
+              <p>{new Date(msg.createdAt).toLocaleTimeString()}</p>
+            </div>
           </div>
-        </div>
-        <div className="s-message">
-          <img src="/assets/pic1.png" className="pic1-img" alt="" />
-          <div>
-            <img
-              src="/assets/profile_martin.png"
-              className="message-img"
-              alt="Profile Icon"
-            />
-            <p>2:30 PM</p>
-          </div>
-        </div>
-        <div className="r-message">
-          <p className="msg">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua
-          </p>
-          <div>
-            <img src="/assets/profile_martin.png" alt="Profile Icon" />
-            <p>2:30 PM</p>
-          </div>
-        </div>
+        ))}
       </div>
+
+      {/* Input section for sending new messages */}
       <div className="chat-input">
         <input type="text" placeholder="Send a message" />
         <input type="file" id="image" accept="image/png, image/jpeg" hidden />
         <label htmlFor="image">
-          <img
-            src="/assets/gallery_icon.png"
-            className="help "
-            alt="Gallery icon"
-          />
+          <img src="/assets/gallery_icon.png" alt="Gallery icon" />
         </label>
-        <img src="/assets/send_button.png" alt="Button Icon" />
+        <img src="/assets/send_button.png" alt="Send button" />
       </div>
+    </div>
+  ) : (
+    <div className={`chat-welcome ${chatVisible ? "" : "hidden"}`}>
+      {/* Display a message if no chat is selected */}
+      <p>Click on a user to start chatting!</p>
     </div>
   );
 };
