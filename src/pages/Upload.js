@@ -7,8 +7,23 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "firebase/auth";
 import firebase from "firebase/app";
 import {doc, getDoc} from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 export default function Upload() {
+    const navigate = useNavigate();
+
+    // Prevent signed out users from accessing
+    useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          // Redirect to home
+          navigate("/home");
+        }
+      });
+  
+      // Cleanup listener
+      return () => unsubscribe();
+    }, [navigate]);
 
     const { currentUser, userData } = useAuth();
 
