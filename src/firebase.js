@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged , updateProfile , signOut } from "firebase/auth";
-import { getStorage, uploadBytes, ref, getDownloadURL } from "firebase/storage";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 import { getFirestore, getDoc, doc } from "firebase/firestore";
 import { useState, useEffect } from "react";
 
@@ -37,30 +37,15 @@ export function useAuth() {
   return { currentUser, userData };
 }
 
-// storage file upload for profile
-export async function uploadProfile(file, currentUser, setLoading) {
-  // reference to file
-  const fileRef = ref(storage, `profiles/${currentUser.uid}${file.name}`);
-  setLoading(true);
-  const snapshot = await uploadBytes(fileRef, file);
-
-  const photoURL = await getDownloadURL(fileRef);
-
-  updateProfile(currentUser, {photoURL: photoURL});
-
-  setLoading(false);
-  alert("File succefully uploaded.");
-}
-
 // function for user to sign out
 export const handleSignOut = () => {
   signOut(auth)
     .then(() => {
       // Sign-out successful.
-      console.log('User signed out.');
+      console.log("User signed out.");
     })
     .catch((error) => {
       // An error happened.
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error);
     });
 };

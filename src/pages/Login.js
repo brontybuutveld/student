@@ -1,5 +1,5 @@
 import {getAuth, onAuthStateChanged, signInWithEmailAndPassword} from "firebase/auth";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Form, Button, Card, Col, Row } from "react-bootstrap";
 import {useState, useEffect} from "react";
 import Header from "../components/Header.js";
@@ -15,6 +15,21 @@ export default function Login() {
     const [user, setUser] = useState(null); // Initialize user as null
     const [passwordError, setPasswordError] = useState("");
     const [emailError, setEmailError] = useState("");
+
+    const navigate = useNavigate();
+
+    // Prevent signed in users from accessing
+    useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // Redirect to home
+          navigate("/navpage");
+        }
+      });
+  
+      // Cleanup listener
+      return () => unsubscribe();
+    }, [navigate]);
 
     //Monitor authentication state
     useEffect(() => {

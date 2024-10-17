@@ -1,10 +1,28 @@
 import Header from "../components/Header";
-import Footer from "../components/Footer";
-import placeholder from "../components/placeholder.png";
+import placeholder from "../components/images/placeholder.png";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase.js";
 
-/** this is page shown after users log in */
+/** this is only shown when user is logged in */
 
 export default function NavPage() {
+    const navigate = useNavigate();
+
+    // Prevent signed out users from accessing
+    useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          // Redirect to home
+          navigate("/home");
+        }
+      });
+  
+      // Cleanup listener
+      return () => unsubscribe();
+    }, [navigate]);
+
     return (
         <>
             <Header />
@@ -55,7 +73,6 @@ export default function NavPage() {
                 </div>
 
             </div>
-            <Footer />
         </>
     );
 }

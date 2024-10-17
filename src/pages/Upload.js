@@ -86,6 +86,7 @@ export default function Upload() {
         });
         response.prefixes.forEach((prefixe) => {
           subdir.push(prefixe.name);
+
         });
 
         setSubDirs(subdir);
