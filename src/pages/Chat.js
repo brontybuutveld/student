@@ -14,7 +14,7 @@ const Chat = () => {
   const { userData, setUserData } = useContext(AppContext); // Access user data
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const { chatData, usersData } = useContext(AppContext); // Context values
+  const { chatData, usersData } = useContext(AppContext);
 
   // Stop loading when chat data and user data are available
   useEffect(() => {
@@ -33,10 +33,11 @@ const Chat = () => {
 
           if (userSnapshot.exists()) {
             const userData = userSnapshot.data();
-            setUserData({ ...user, ...userData }); // Merge Firebase Auth user with Firestore data
+            console.log("Fetched userData:", userData); // Add this log to see fetched user data in the console
+            setUserData({ ...user, ...userData });
             setLoading(false); // Stop loading once data is fetched
           } else {
-            navigate("/login"); // Redirect if no user data
+            navigate("/login"); // Redirect if no user data found
           }
         } catch (error) {
           console.error("Error fetching user data:", error);

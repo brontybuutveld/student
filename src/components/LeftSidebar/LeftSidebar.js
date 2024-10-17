@@ -18,34 +18,68 @@ import {
 import { toast } from "react-toastify";
 
 const LeftSidebar = () => {
-  const { userData, setChatUser, setMessagesId, setChatVisible } =
-    useContext(AppContext);
+  const {
+    userData,
+    setChatUser,
+    setMessagesId,
+    setChatVisible,
+    chatsData,
+    setUser,
+    messageId,
+  } = useContext(AppContext);
   const [chatList, setChatList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
 
   useEffect(() => {
-    if (!userData?.id) return;
+    if (!userData?.uid) {
+      console.log("No userData available.");
+      return;
+    }
 
-    // Listen for changes in the user's chat data
-    const chatsRef = doc(db, "chats", userData.id);
+    console.log("Fetching chat data for user:", userData.uid);
+
+    const chatsRef = doc(db, "chats", userData.uid);
+
+    // Listen for changes in the users chat data
     const unsubscribe = onSnapshot(chatsRef, async (snapshot) => {
       if (snapshot.exists()) {
         const chatsData = snapshot.data().chatsData || [];
+
+        console.log("Fetched chat data:", chatsData);
+
+        // Fetch user data for each chat
         const promises = chatsData.map(async (chat) => {
           const userRef = doc(db, "users", chat.rId);
           const userSnapshot = await getDoc(userRef);
           if (userSnapshot.exists()) {
             const user = userSnapshot.data();
+            console.log(
+              `Fetched user data for chat with rId ${chat.rId}:`,
+              user
+            );
             return {
               ...chat,
-              userData: user,
+              userData: user, // Attach user data to the chat
             };
+          } else {
+            console.error("User data not found for chat:", chat.rId);
+            return null;
           }
-          return null;
         });
+
         const resolvedChats = await Promise.all(promises);
-        setChatList(resolvedChats.filter(Boolean)); // Only show valid chats
+
+        // Filter out the logged in users own profile
+        const uniqueChats = resolvedChats.filter(
+          (chat) => chat && chat.rId !== userData.uid
+        );
+
+        setChatList(uniqueChats);
+        console.log("Chat list updated:", uniqueChats);
+      } else {
+        console.log("No chat data found for user:", userData.uid);
+        setChatList([]);
       }
     });
 
@@ -71,55 +105,90 @@ const LeftSidebar = () => {
       ...doc.data(),
     }));
 
-    setSearchResults(results); // Display search results
+    console.log("Search results for input:", input, results);
+
+    setSearchResults(results);
   };
 
   const addChat = async (user) => {
-    console.log("Clicked user details:", user); // Logging clicked user
+    console.log("Clicked user details:", user);
 
     if (!user?.id || !userData?.uid) {
       console.error("User or userData ID is missing.");
       return;
     }
 
+    const chatsRef = doc(db, "chats", userData.uid);
     const messagesRef = collection(db, "messages");
-    const chatsRef = collection(db, "chats");
 
     try {
-      const newMessageRef = doc(messagesRef);
+      const userChatsSnapshot = await getDoc(chatsRef);
 
-      // Create new chat with an empty message list
-      await setDoc(newMessageRef, {
-        createAt: serverTimestamp(),
-        messages: [],
-      });
+      // Ensure chatsData exists and is an array
+      let userChatsData = userChatsSnapshot.exists()
+        ? userChatsSnapshot.data().chatsData || []
+        : [];
 
-      // Add chat for the selected user
-      await updateDoc(doc(chatsRef, user.id), {
-        chatsData: arrayUnion({
-          messageId: newMessageRef.id,
-          lastMessage: "",
-          rId: userData.uid,
-          updatedAt: Date.now(),
-          messageSeen: true,
-        }),
-      });
+      // Check if the chat already exists
+      let existingChat = userChatsData.find((chat) => chat.rId === user.id);
 
-      // Add chat for the current user
-      await updateDoc(doc(chatsRef, userData.uid), {
-        chatsData: arrayUnion({
+      let newMessageRef;
+
+      if (existingChat) {
+        // Chat already exists use the existing one
+        newMessageRef = doc(messagesRef, existingChat.messageId);
+        console.log(
+          "Using existing chat with messageId:",
+          existingChat.messageId
+        );
+
+        await updateDoc(newMessageRef, {
+          updatedAt: serverTimestamp(),
+        });
+      } else {
+        // Create new chat if none exists
+        newMessageRef = doc(messagesRef);
+        await setDoc(newMessageRef, {
+          createdAt: serverTimestamp(),
+          messages: [],
+        });
+
+        console.log("Created new chat with messageId:", newMessageRef.id);
+
+        const newChatData = {
           messageId: newMessageRef.id,
           lastMessage: "",
           rId: user.id,
           updatedAt: Date.now(),
           messageSeen: true,
-        }),
-      });
+        };
+
+        // Update both users chatsData in Firestore
+        await Promise.all([
+          setDoc(
+            doc(db, "chats", user.id),
+            {
+              chatsData: arrayUnion({
+                messageId: newMessageRef.id,
+                lastMessage: "",
+                rId: userData.uid,
+                updatedAt: Date.now(),
+                messageSeen: false,
+              }),
+            },
+            { merge: true }
+          ),
+          setDoc(
+            doc(db, "chats", userData.uid),
+            { chatsData: arrayUnion(newChatData) },
+            { merge: true }
+          ),
+        ]);
+      }
 
       const uSnap = await getDoc(doc(db, "users", user.id));
       const uData = uSnap.data();
 
-      // Set the chat user context after creating the chat
       setChatUser({
         messageId: newMessageRef.id,
         lastMessage: "",
@@ -129,24 +198,17 @@ const LeftSidebar = () => {
         userData: uData,
       });
 
-      console.log("Setting chat user:", {
-        messageId: newMessageRef.id,
-        lastMessage: "",
-        rId: user.id,
-        updatedAt: Date.now(),
-        messageSeen: true,
-        userData: uData,
-      });
-
-      setShowSearch(false);
-
-      // Show chat box once the chat is set up
-      if (uData && newMessageRef.id) {
-        setChatVisible(true);
-      }
+      setChatVisible(true);
+      setMessagesId(newMessageRef.id);
     } catch (error) {
-      toast.error(error.message);
+      console.error("Error creating chat:", error);
     }
+  };
+
+  const setChat = async (item) => {
+    console.log("Setting chat for selected chat item:", item);
+    setMessagesId(item.messageId);
+    setChatUser(item);
   };
 
   return (
@@ -159,39 +221,46 @@ const LeftSidebar = () => {
         />
       </div>
       <div className="ls-list">
-        {showSearch && searchResults.length > 0
-          ? searchResults.map((user) => (
-              <div
-                key={user.id}
-                className="friends"
-                onClick={() => addChat(user)}
-              >
-                <img
-                  src={user.avatar || "/assets/default_avatar.png"}
-                  alt="User Avatar"
-                  className="profile-icon"
-                />
-                <div>
-                  <p>{`${user.firstName} ${user.lastName}`}</p>
-                </div>
+        {showSearch && searchResults.length > 0 ? (
+          searchResults.map((user) => (
+            <div
+              key={user.id}
+              className="friends"
+              onClick={() => addChat(user)}
+            >
+              <img
+                src={user.avatar || "/assets/default_avatar.png"}
+                alt="User Avatar"
+                className="profile-icon"
+              />
+              <div className="chat-info">
+                <p className="chat-name">{`${user.firstName} ${user.lastName}`}</p>
               </div>
-            ))
-          : chatList.map((chat) => (
-              <div
-                key={chat.rId}
-                className="friends"
-                onClick={() => setChatUser(chat)}
-              >
-                <img
-                  src={chat.userData.avatar || "/assets/default_avatar.png"}
-                  alt="User Avatar"
-                  className="profile-icon"
-                />
-                <div>
-                  <p>{chat.userData.name}</p>
-                </div>
+            </div>
+          ))
+        ) : chatList && chatList.length > 0 ? (
+          chatList.map((chat) => (
+            <div
+              key={chat.messageId}
+              className="friends"
+              onClick={() => setChat(chat)}
+            >
+              <img
+                src={chat.userData.avatar || "/assets/default_avatar.png"}
+                alt="User Avatar"
+                className="profile-icon"
+              />
+              <div className="chat-info">
+                <p className="chat-name">{`${chat.userData.firstName} ${chat.userData.lastName}`}</p>
+                <p className="last-message">
+                  {chat.lastMessage || "No messages yet"}
+                </p>
               </div>
-            ))}
+            </div>
+          ))
+        ) : (
+          <p>No chats found.</p>
+        )}
       </div>
     </div>
   );
