@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { toast } from "react-toastify";
+import upload from "../../lib/upload";
 
 const ChatBox = () => {
   const {
@@ -23,6 +24,9 @@ const ChatBox = () => {
   } = useContext(AppContext);
 
   const [input, setInput] = useState("");
+  const [previewImage, setPreviewImage] = useState(null);
+  const [previewType, setPreviewType] = useState(null); // Track whether its an image or file
+  const [previewFileName, setPreviewFileName] = useState(""); // Track file name for file preview
 
   const sendMessage = async () => {
     if (!input) {
@@ -116,7 +120,7 @@ const ChatBox = () => {
         // Update chat list in the sidebar for the sender
         setChatData(senderChatsData);
 
-        // Clear input after sending message
+        // Clear input after sending the message
         setInput("");
       }
     } catch (error) {
@@ -125,7 +129,60 @@ const ChatBox = () => {
     }
   };
 
-  // Set up listener for real time message updates
+  const sendFile = async (e) => {
+    try {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      // Upload the file and get the URL
+      const fileUrl = await upload(file);
+
+      if (fileUrl && messagesId) {
+        // Add the file message to Firestore
+        await updateDoc(doc(db, "messages", messagesId), {
+          messages: arrayUnion({
+            sId: userData.uid,
+            fileName: file.name, // Store file name
+            fileType: file.type, // Store file type image/png or application/pdf
+            fileUrl: fileUrl, // URL of the uploaded file
+            createdAt: new Date(),
+          }),
+        });
+
+        console.log("File sent:", fileUrl);
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      toast.error("Error uploading file: " + error.message);
+    }
+  };
+
+  const downloadFile = async (fileUrl, originalFileName) => {
+    try {
+      const customFileName = prompt(
+        "Enter a file name to save:",
+        originalFileName || "downloaded_file"
+      );
+      if (!customFileName) {
+        // If user cancels or doesnt enter a name exit the function
+        return;
+      }
+
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = customFileName; // Use custom file name
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading the file:", error);
+    }
+  };
+
+  // Set up listener for real-time message updates
   useEffect(() => {
     if (messagesId) {
       console.log("Setting up message listener for messagesId:", messagesId);
@@ -140,9 +197,43 @@ const ChatBox = () => {
     }
   }, [messagesId, setMessages]);
 
+  const handlePreview = (fileUrl, type, fileName) => {
+    setPreviewImage(fileUrl); // Set the clicked file for preview
+    setPreviewType(type); // Set the preview type image or file
+    setPreviewFileName(fileName || "downloaded_file"); // Set file name
+  };
+
+  const closePreview = () => {
+    setPreviewImage(null); // Close the preview
+    setPreviewType(null); // Clear the preview type
+    setPreviewFileName(""); // Clear the file name
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        closePreview(); // Close preview when Esc key is pressed
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  // Scroll to the bottom of the chat when messages update
+  useEffect(() => {
+    const chatContainer = document.querySelector(".chat-msg");
+    if (chatContainer) {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+  }, [messages]);
+
   return chatUser ? (
     <div className={`chat-box ${chatVisible ? "" : "hidden"}`}>
-      {/* Display the current chat users avatar and name */}
+      {/* Display the current chat user's avatar and name */}
       <div className="chat-user">
         <img
           src={chatUser.userData.avatar || "/assets/default_avatar.png"}
@@ -151,11 +242,7 @@ const ChatBox = () => {
         <p>
           {chatUser.userData.firstName} {chatUser.userData.lastName}
           {Date.now() - chatUser.userData.lastSeen <= 70000 ? (
-            <img
-              className="green-dot"
-              src="/assets/green_dot.png"
-              alt="Online"
-            />
+            <img className="green-dot" src="/assets/green_dot.png" alt="" />
           ) : null}
         </p>
       </div>
@@ -176,7 +263,36 @@ const ChatBox = () => {
               alt="Profile Icon"
             />
             <div>
-              <p className="msg">{msg.text}</p>
+              {/* Display text message if it exists */}
+              {msg.text && <p className="msg">{msg.text}</p>}
+
+              {/* Display image if it exists and allow preview */}
+              {msg.fileUrl && msg.fileType?.startsWith("image/") && (
+                <img
+                  src={msg.fileUrl}
+                  alt="Sent image"
+                  className="msg-image"
+                  onClick={() => handlePreview(msg.fileUrl, "image")}
+                  style={{ cursor: "pointer" }} // Indicate it's clickable
+                />
+              )}
+
+              {/* Display file if it exists and allow preview */}
+              {msg.fileUrl && !msg.fileType?.startsWith("image/") && (
+                <div className="file-preview">
+                  <img
+                    src="/assets/pngtree-file-icon-image_2292647-removebg-preview.png"
+                    alt="File icon"
+                    className="file-icon-small"
+                    onClick={() =>
+                      handlePreview(msg.fileUrl, "file", msg.fileName)
+                    } // Click to preview files
+                    style={{ cursor: "pointer" }}
+                  />
+                  <p className="file-name">{msg.fileName}</p>
+                </div>
+              )}
+
               <p className="msg-time">
                 {new Date(msg.createdAt?.seconds * 1000).toLocaleTimeString()}
               </p>
@@ -193,9 +309,9 @@ const ChatBox = () => {
           type="text"
           placeholder="Send a message"
         />
-        <input type="file" id="image" accept="image/png, image/jpeg" hidden />
-        <label htmlFor="image">
-          <img src="/assets/gallery_icon.png" alt="Gallery icon" />
+        <input onChange={sendFile} type="file" id="file" accept="*" hidden />
+        <label htmlFor="file">
+          <img src="/assets/gallery_icon.png" alt="File icon" />
         </label>
         <img
           onClick={sendMessage}
@@ -203,10 +319,43 @@ const ChatBox = () => {
           alt="Send button"
         />
       </div>
+
+      {/* Preview Modal for images and files */}
+      {previewImage && (
+        <div
+          className="image-preview-modal"
+          onClick={closePreview} // Clicking anywhere outside will close
+        >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            {/* Check if preview is for an image or a file */}
+            {previewType === "image" ? (
+              <img src={previewImage} alt="Preview" className="preview-image" />
+            ) : (
+              <div className="file-preview-modal">
+                <img
+                  src="/assets/pngtree-file-icon-image_2292647-removebg-preview.png"
+                  alt="File preview"
+                  className="file-preview-icon"
+                />
+                <p>{previewFileName}</p>
+              </div>
+            )}
+
+            <button
+              className="download-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                downloadFile(previewImage, previewFileName); // Call the download function
+              }}
+            >
+              Download
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   ) : (
     <div className={`chat-welcome ${chatVisible ? "" : "hidden"}`}>
-      {/* Prompt the user to select a chat if none is active */}
       <p>Click on a user to start chatting!</p>
     </div>
   );

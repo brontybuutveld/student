@@ -1,8 +1,9 @@
-.chat-box {
+.chat-box,
+.left-sidebar,
+.right-sidebar {
+  height: 100vh; /* Full viewport height */
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-  background-color: #f1f5ff;
 }
 
 .chat-user {
@@ -36,6 +37,8 @@
 }
 
 .chat-input {
+  position: relative;
+  bottom: 0;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -63,24 +66,32 @@
   background-color: #e8e8e8;
 }
 
-/* Chat message area */
 .chat-msg {
   flex-grow: 1;
   padding: 10px 15px;
   overflow-y: auto;
   display: flex;
   flex-direction: column-reverse;
+  margin-bottom: 60px;
 }
 
-.s-msg div img,
-.r-msg div img {
+.s-msg div img.profile-icon,
+.r-msg div img.profile-icon {
   width: 40px;
   aspect-ratio: 1/1;
   border-radius: 50%;
   margin-right: 10px;
 }
 
-/* Styling for sent and received messages */
+.msg-image {
+  max-width: 300px;
+  max-height: 400px;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
 .s-msg,
 .r-msg {
   max-width: 70%;
@@ -108,14 +119,12 @@
   word-wrap: break-word;
 }
 
-/* Sent message */
 .s-msg .msg {
   background-color: #077eff;
   color: white;
   border-radius: 15px 15px 0px 15px;
 }
 
-/* Received message */
 .r-msg .msg {
   background-color: #e5e5e5;
   color: black;
@@ -128,7 +137,6 @@
   margin-top: 3px;
 }
 
-/* For welcome screen when no chat is selected */
 .chat-welcome {
   width: 100%;
   display: flex;
@@ -147,4 +155,94 @@
   font-size: 18px;
   font-weight: 500;
   color: #383838;
+}
+
+.left-sidebar,
+.right-sidebar {
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.image-preview-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.preview-image {
+  max-width: 50vw;
+  max-height: 70vh;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+.download-btn {
+  padding: 10px 20px;
+  background-color: #077eff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.file-preview-modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.file-preview-icon {
+  width: 100px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.file-name {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.download-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.download-btn:hover {
+  background-color: #0056b3;
+}
+
+.file-icon-small {
+  width: 50px;
+  height: auto;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.file-preview {
+  display: flex;
+  align-items: center;
 }
