@@ -6,9 +6,10 @@ import {
   doc,
   getDoc,
   onSnapshot,
+  serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "../../firebase";
+import { auth, db } from "../../firebase";
 import { toast } from "react-toastify";
 import upload from "../../lib/upload";
 
@@ -182,6 +183,38 @@ const ChatBox = () => {
     }
   };
 
+  // Presence tracking logic
+  useEffect(() => {
+    const setUserOnlineStatus = async (isOnline) => {
+      const user = auth.currentUser;
+      if (user) {
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, {
+          online: isOnline,
+          lastSeen: serverTimestamp(),
+        });
+      }
+    };
+
+    // Set user online when the component mounts
+    setUserOnlineStatus(true);
+
+    // When the window/tab is closed set the user as offline
+    const handleTabClose = () => {
+      setUserOnlineStatus(false);
+    };
+
+    // Detect when the page is closed or refreshed
+    window.addEventListener("beforeunload", handleTabClose);
+
+    return () => {
+      // Clean up the event listener
+      window.removeEventListener("beforeunload", handleTabClose);
+
+      setUserOnlineStatus(false);
+    };
+  }, []);
+
   // Set up listener for real-time message updates
   useEffect(() => {
     if (messagesId) {
@@ -236,15 +269,29 @@ const ChatBox = () => {
       {/* Display the current chat user's avatar and name */}
       <div className="chat-user">
         <img
-          className="profile-icon" // <-- Add this class
+          className="profile-icon"
           src={chatUser.userData?.avatar || "/assets/default_avatar.png"}
           alt="User Avatar"
         />
         <p>
           {chatUser.userData.firstName} {chatUser.userData.lastName}
-          {Date.now() - chatUser.userData.lastSeen <= 70000 ? (
-            <img className="green-dot" src="/assets/green_dot.png" alt="" />
-          ) : null}
+          {/* Check if lastSeen exists and handle different data types */}
+          {
+            chatUser.userData?.lastSeen &&
+            typeof chatUser.userData.lastSeen.toMillis === "function" ? (
+              Date.now() - chatUser.userData.lastSeen.toMillis() <= 70000 ? (
+                <img
+                  className="green-dot"
+                  src="/assets/green_dot.png"
+                  alt="Online"
+                />
+              ) : (
+                <span className="away-text">Away</span>
+              )
+            ) : (
+              <span className="away-text">Away</span>
+            ) // Handle missing or invalid lastSeen
+          }
         </p>
       </div>
 
@@ -257,7 +304,7 @@ const ChatBox = () => {
           >
             {/* Display the avatar of the message sender */}
             <img
-              className="profile-icon" // <-- Add this class
+              className="profile-icon"
               src={
                 msg.sId === chatUser.rId
                   ? chatUser.userData?.avatar || "/assets/default_avatar.png"
@@ -276,7 +323,7 @@ const ChatBox = () => {
                   alt="Sent image"
                   className="msg-image"
                   onClick={() => handlePreview(msg.fileUrl, "image")}
-                  style={{ cursor: "pointer" }} // Indicate it's clickable
+                  style={{ cursor: "pointer" }}
                 />
               )}
 
@@ -289,7 +336,7 @@ const ChatBox = () => {
                     className="file-icon-small"
                     onClick={() =>
                       handlePreview(msg.fileUrl, "file", msg.fileName)
-                    } // Click to preview files
+                    }
                     style={{ cursor: "pointer" }}
                   />
                   <p className="file-name">{msg.fileName}</p>
@@ -325,12 +372,8 @@ const ChatBox = () => {
 
       {/* Preview Modal for images and files */}
       {previewImage && (
-        <div
-          className="image-preview-modal"
-          onClick={closePreview} // Clicking anywhere outside will close
-        >
+        <div className="image-preview-modal" onClick={closePreview}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            {/* Check if preview is for an image or a file */}
             {previewType === "image" ? (
               <img src={previewImage} alt="Preview" className="preview-image" />
             ) : (
@@ -343,12 +386,11 @@ const ChatBox = () => {
                 <p>{previewFileName}</p>
               </div>
             )}
-
             <button
               className="download-btn"
               onClick={(e) => {
                 e.stopPropagation();
-                downloadFile(previewImage, previewFileName); // Call the download function
+                downloadFile(previewImage, previewFileName);
               }}
             >
               Download
