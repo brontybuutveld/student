@@ -41,14 +41,15 @@ export default function Header() {
           <a href="/calendar">Calendar</a>
           <a href="/chat">Chat</a>
           <a href="/notes">My notes</a>
-          <a href="/files">My files</a>
+          <a href="/upload">My files</a>
+          
           <a className="header-right" href={`/profile/${currentUser.uid}`}>
             <img src={photoURL} alt="avatar" className="mini-avatar" />
           </a>
-          {/** not yet implemented */}
           <a className="rightbutton" href="/home" onClick={handleSignOut}>
             Sign out
           </a>
+          <a className="right-nobkg" href="/searchprofile">Search User</a>
         </>
       )}
     </div>

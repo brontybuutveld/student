@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { db, storage, uploadProfile } from "../firebase.js";
+import { db, storage } from "../firebase.js";
 import { doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { updateProfile } from "firebase/auth";
@@ -7,17 +7,26 @@ import { updateProfile } from "firebase/auth";
 export default function EditProfile({ currentUser, userData }) {
   // storage file upload for profile
   async function uploadProfile(file, currentUser, setLoading) {
-    // reference to file
-    const fileRef = ref(storage, `profiles/${currentUser.uid}${file.name}`);
-    setLoading(true);
-    const snapshot = await uploadBytes(fileRef, file);
+    try {
+      // Reference to the storage path
+      const fileRef = ref(storage, `profiles/${currentUser.uid}_${file.name}`);
+      setLoading(true);
 
-    const photoURL = await getDownloadURL(fileRef);
+      // Upload the file
+      const snapshot = await uploadBytes(fileRef, file);
+      const photoURL = await getDownloadURL(fileRef);
+      await updateProfile(currentUser, { photoURL });
 
-    updateProfile(currentUser, { photoURL: photoURL });
+      const userDocRef = doc(db, "users", currentUser.uid);
+      await updateDoc(userDocRef, { photoURL });
 
-    setLoading(false);
-    alert("File succefully uploaded.");
+      setLoading(false);
+      alert("Profile picture uploaded successfully.");
+    } catch (error) {
+      console.error("Error uploading profile picture: ", error);
+      setLoading(false);
+      alert("Failed to upload profile picture.");
+    }
   }
 
   const [photo, setPhoto] = useState(null);
@@ -43,6 +52,7 @@ export default function EditProfile({ currentUser, userData }) {
       return;
     }
 
+    // Update bio in user's document
     try {
       const userDocRef = doc(db, "users", currentUser.uid);
       await updateDoc(userDocRef, {
@@ -59,7 +69,11 @@ export default function EditProfile({ currentUser, userData }) {
     <div className="edit-profile-container">
       <p>Update your avatar</p>
       <input type="file" onChange={handleChange} />
-      <button disabled={loading || !photo} onClick={handleUploadClick}>
+      <button
+        disabled={loading || !photo}
+        onClick={handleUploadClick}
+        className="btn btn-primary"
+      >
         Upload profile picture
       </button>
 
@@ -71,7 +85,11 @@ export default function EditProfile({ currentUser, userData }) {
           value={bio}
           onChange={(e) => setBio(e.target.value)}
         />
-        <button disabled={loading} onClick={handleBioClick}>
+        <button
+          disabled={loading}
+          onClick={handleBioClick}
+          className="btn btn-primary"
+        >
           Submit bio
         </button>
       </div>

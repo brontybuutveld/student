@@ -18,9 +18,17 @@ p {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+ul {
+  padding-left: 0;
+}
+
 li {
   text-decoration: none;
   list-style-type: none;
+}
+
+a {
+  color: var(--black);
 }
 
 a:link,
@@ -127,6 +135,10 @@ body {
   color: black;
 }
 
+.headerbar .right-nobkg {
+  float:right;
+}
+
 .headerbar .rightbutton {
   float: right;
   background-color: var(--accentcolor);
@@ -218,23 +230,25 @@ body {
 .profile-container {
   background-color: var(--maincolordark);
   color: var(--black);
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .profile-main-box {
-  width: 100vw;
-  display: flex;
-  justify-content: space-around;
-}
-
-.profile-box {
-  background-color: rgb(153, 153, 177);
+  width: 35vw;
   display: flex;
   flex-direction: column;
-  width: 50%;
-  margin-top: 50px;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.profile-box, .profile-button-box, .friends-box {
+  background-color: rgb(153, 161, 177);
+  display: flex;
+  flex-direction: column;
+  margin-top: 3vh;
   box-shadow: 5px 5px 5px 5px rgb(0, 0, 0);
   border-radius: 10px;
+  width: 95%;
 }
 
 .profile-top {
@@ -245,19 +259,36 @@ body {
   margin: 1rem;
 }
 
-.profile-button-box {
+.profile-button-box, .friends-box {
   background-color: var(--white);
-  box-shadow: 5px 5px 5px 5px rgb(0, 0, 0);
-  border-radius: 10px;
-  width: 40%;
-  margin-top: 50px;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
+  text-align: center;
+  padding: 8px 0;
 }
 
-.profile-button {
+.profile-button-box button, .profile-button-box a {
   margin: 10px 6vw;
+}
+
+.friends-list {
+  padding: 0;
+  margin: 5px;
+}
+
+.friends-list li {
+  display: flex; /* Flexbox layout for horizontal alignment */
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 2px solid rgb(153, 161, 177);
+}
+
+.friends-link {
+  color: var(--maincolor);
+}
+
+.requests-box button {
+  margin: 2vh 0;
 }
 
 .profile-info {
