@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { getStorage, uploadBytes, ref, getDownloadURL } from "firebase/storage";
-import { getFirestore, getDoc, doc } from "firebase/firestore";
+import { getFirestore, getDoc, doc, updateDoc } from "firebase/firestore";
 import { useState, useEffect } from "react";
 
 // change later
@@ -46,15 +46,29 @@ export function useAuth() {
 
 // storage file upload
 export async function uploadProfile(file, currentUser, setLoading) {
-  // reference to file
-  const fileRef = ref(storage, `profiles/${currentUser.uid}${file.name}`);
-  setLoading(true);
-  const snapshot = await uploadBytes(fileRef, file);
+  try {
+    const fileRef = ref(storage, `profiles/${currentUser.uid}_${file.name}`);
+    setLoading(true);
 
-  const photoURL = await getDownloadURL(fileRef);
+    // Upload file to Firebase Storage
+    const snapshot = await uploadBytes(fileRef, file);
 
-  updateProfile(currentUser, { photoURL: photoURL });
+    // Get download URL
+    const photoURL = await getDownloadURL(fileRef);
 
-  setLoading(false);
-  alert("File succefully uploaded.");
+    // Update Firebase Auth user profile
+    await updateProfile(currentUser, { photoURL });
+
+    // Update the user's document in Firestore with the avatar URL
+    const userDocRef = doc(db, "users", currentUser.uid);
+    await updateDoc(userDocRef, {
+      avatar: photoURL,
+    });
+
+    setLoading(false);
+    alert("Profile picture uploaded successfully.");
+  } catch (error) {
+    console.error("Error uploading profile picture:", error);
+    setLoading(false);
+  }
 }

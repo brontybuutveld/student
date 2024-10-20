@@ -3,6 +3,7 @@ import { db } from "../firebase";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 export const AppContext = createContext();
 
@@ -13,30 +14,36 @@ const AppContextProvider = (props) => {
   const [messages, setMessages] = useState([]);
   const [chatUser, setChatUser] = useState(null);
   const [chatVisible, setChatVisible] = useState(false);
+  const navigate = useNavigate();
 
   // Listen for authentication state changes user login/logout
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        console.log("User logged in:", user.uid); // Log when a user is logged in
+        try {
+          // Fetch user data from Firestore
+          const userSnapshot = await getDoc(doc(db, "users", user.uid));
+          if (userSnapshot.exists()) {
+            const userData = userSnapshot.data();
+            console.log("User data including avatar:", userData); // Check for avatar field
 
-        // Fetch user data from Firestore
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          setUserData({ uid: user.uid, ...userSnap.data() });
-          console.log("User data fetched:", userSnap.data()); // Log fetched user data
-        } else {
-          console.error("No user data found for user:", user.uid);
+            // Set the userData in your context state, ensuring avatar is included
+            setUserData({ uid: user.uid, ...userData });
+          } else {
+            console.error("No user data found for user:", user.uid);
+            navigate("/login"); // Redirect if no user data found
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
         }
       } else {
-        setUserData(null); // Reset when no user is logged in
-        console.log("No user is logged in");
+        setUserData(null); // Reset userData when logged out
+        navigate("/login"); // Redirect to login if not authenticated
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [setUserData, navigate]);
 
   // Fetch chat data once userData is available
   useEffect(() => {

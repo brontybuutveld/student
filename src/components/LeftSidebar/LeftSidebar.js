@@ -228,6 +228,7 @@ const LeftSidebar = () => {
               className="friends"
               onClick={() => addChat(user)}
             >
+              {/* Ensure the avatar URL is displayed, fallback to default if missing */}
               <img
                 src={user.avatar || "/assets/default_avatar.png"}
                 alt="User Avatar"
@@ -245,8 +246,9 @@ const LeftSidebar = () => {
               className="friends"
               onClick={() => setChat(chat)}
             >
+              {/* Display the avatar from chat.userData, fallback to default if not available */}
               <img
-                src={chat.userData.avatar || "/assets/default_avatar.png"}
+                src={chat.userData?.avatar || "/assets/default_avatar.png"}
                 alt="User Avatar"
                 className="profile-icon"
               />

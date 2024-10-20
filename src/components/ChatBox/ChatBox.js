@@ -236,7 +236,8 @@ const ChatBox = () => {
       {/* Display the current chat user's avatar and name */}
       <div className="chat-user">
         <img
-          src={chatUser.userData.avatar || "/assets/default_avatar.png"}
+          className="profile-icon" // <-- Add this class
+          src={chatUser.userData?.avatar || "/assets/default_avatar.png"}
           alt="User Avatar"
         />
         <p>
@@ -252,13 +253,15 @@ const ChatBox = () => {
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={msg.sId === chatUser.rId ? "r-msg" : "s-msg"}
+            className={msg.sId === userData.uid ? "r-msg" : "s-msg"}
           >
+            {/* Display the avatar of the message sender */}
             <img
+              className="profile-icon" // <-- Add this class
               src={
                 msg.sId === chatUser.rId
-                  ? chatUser.userData.avatar
-                  : "/assets/default_avatar.png"
+                  ? chatUser.userData?.avatar || "/assets/default_avatar.png"
+                  : userData?.avatar || "/assets/default_avatar.png"
               }
               alt="Profile Icon"
             />

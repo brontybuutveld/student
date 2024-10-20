@@ -7,15 +7,16 @@
 }
 
 .chat-user {
-  padding: 10px 15px;
+  padding: 15px 20px; /* Adjust padding for more spacing */
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   border-bottom: 1px solid #c6c6c6;
 }
 
 .chat-user img {
-  width: 38px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
 }
 
@@ -80,7 +81,8 @@
   width: 40px;
   aspect-ratio: 1/1;
   border-radius: 50%;
-  margin-right: 10px;
+  margin-right: 15px;
+  object-fit: cover;
 }
 
 .msg-image {
@@ -94,10 +96,13 @@
 
 .s-msg,
 .r-msg {
-  max-width: 70%;
   display: flex;
   align-items: flex-start;
   margin-bottom: 15px;
+  max-width: 70%;
+  word-wrap: break-word;
+  flex-shrink: 1;
+  gap: 15px;
 }
 
 .r-msg {
@@ -120,15 +125,15 @@
 }
 
 .s-msg .msg {
-  background-color: #077eff;
-  color: white;
-  border-radius: 15px 15px 0px 15px;
-}
-
-.r-msg .msg {
   background-color: #e5e5e5;
   color: black;
   border-radius: 15px 15px 15px 0px;
+}
+
+.r-msg .msg {
+  background-color: #077eff;
+  color: white;
+  border-radius: 15px 15px 0px 15px;
 }
 
 .msg-time {
