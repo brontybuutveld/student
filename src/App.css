@@ -196,6 +196,7 @@ body {
   justify-content: space-between;
   width: 100%;
   height: 60rem;
+  z-index: 5;
 }
 
 .navpage-item {
@@ -230,7 +231,7 @@ body {
 .profile-container {
   background-color: var(--maincolordark);
   color: var(--black);
-  min-height: 100vh;
+  min-height: 110vh;
 }
 
 .profile-main-box {
@@ -241,7 +242,7 @@ body {
   align-items: center;
 }
 
-.profile-box, .profile-button-box, .friends-box {
+.profile-box, .profile-button-box, .friends-box, .profile-calendar {
   background-color: rgb(153, 161, 177);
   display: flex;
   flex-direction: column;
@@ -268,6 +269,22 @@ body {
 
 .profile-button-box button, .profile-button-box a {
   margin: 10px 6vw;
+}
+
+.profile-calendar {
+  background-color: var(--white);
+  float:right;
+  max-width: 65vw;
+  padding: 1vh;
+  margin: 0;
+  border-radius: 0;
+}
+
+.calendar-page {
+  background-color: var(--white);
+  color: var(--black);
+  padding: 3vh;
+  position: sticky; /* prevent navbar overlap */
 }
 
 .friends-list {

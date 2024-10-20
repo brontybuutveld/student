@@ -8,6 +8,7 @@ import Level from "../components/Level.js";
 import FriendRequestButton from "../components/FriendRequestButton.js";
 import FriendList from "../components/FriendList.js";
 import FriendRequests from "../components/FriendRequestList.js";
+import Calendar from "../components/Calendar.js";
 
 export default function UserProfile() {
   const copyIcon =
@@ -114,6 +115,9 @@ export default function UserProfile() {
       <Header />
 
       <div className="profile-container">
+      <div className="profile-calendar">
+          <Calendar uid={userid} />
+        </div>
         <div className="profile-main-box">
           <div className="profile-box">
             <div className="profile-top">
@@ -189,6 +193,7 @@ export default function UserProfile() {
             </div>
           )}
         </div>
+
       </div>
     </>
   );

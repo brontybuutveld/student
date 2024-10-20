@@ -1,6 +1,6 @@
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Home from './pages/Home';
-import Calendar from './pages/Calendar';
+import CalendarPage from "./pages/CalendarPage";
 import Chat from './pages/Chat';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
@@ -19,7 +19,7 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/chat" element={<Chat />} />
-                    <Route path="/calendar" element={<Calendar />} />
+                    <Route path="/calendar" element={<CalendarPage />} />
                     <Route path="/" element={<Home />} />
                     <Route path="/profile/:userid" element={<UserProfile />} />
                     <Route path="/upload" element={<Upload />} />
