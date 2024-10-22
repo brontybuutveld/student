@@ -9,18 +9,14 @@ import {Link} from "react-router-dom";
 
 export default function ForgotPassword() {
 
-  const sendResetEmail = () => {
-
   const [email, setEmail] = useState("");
 
+  const sendResetEmail = () => {
     //TODO implement forgot password
     console.log("forgot password COMING SOON!");
-    sendPasswordResetEmail (auth, "robinyeetacc@gmail.com")
+    sendPasswordResetEmail (auth, email)
     .then(function() {
-      setEmailSent(true);
       console.log("reset sent");
-
-
     })
     .catch(function(error) {
       console.log(error);
@@ -42,9 +38,6 @@ export default function ForgotPassword() {
         className="p-4 custom-card"
         style={{ maxWidth: "400px", width: "100%" }}
       >
-      {emailSent ? (
-        <p>boop</p>
-      ):(
         <Form onSubmit={handleSubmit}>
           <Form.Label>Email address</Form.Label>
           <Form.Control 
@@ -64,8 +57,6 @@ export default function ForgotPassword() {
           </Button>
 
         </Form>
-        
-      )}
       </Card>
     </div>
     </>
