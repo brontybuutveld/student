@@ -12,6 +12,7 @@ import {
 import { auth, db } from "../../firebase";
 import { toast } from "react-toastify";
 import upload from "../../lib/upload";
+import defaultAvatar from "../../components/images/placeholder.png";
 
 const ChatBox = () => {
   const {
@@ -50,7 +51,7 @@ const ChatBox = () => {
                 const memberData = memberDoc.data();
                 newMemberAvatars[memberId] = {
                   name: `${memberData.firstName} ${memberData.lastName}`,
-                  avatar: memberData.avatar || "/assets/default_avatar.png",
+                  avatar: memberData.photoURL || {defaultAvatar},
                 };
               }
             } catch (error) {
@@ -360,7 +361,7 @@ const ChatBox = () => {
               {/* Display user avatar and name for 1-on-1 chat */}
               <img
                 className="profile-icon"
-                src={chatUser.userData?.avatar || "/assets/default_avatar.png"}
+                src={chatUser.userData?.photoURL || {defaultAvatar}}
                 alt="User Avatar"
               />
               <div className="user-info">
@@ -409,7 +410,7 @@ const ChatBox = () => {
       {/* Chat message section */}
       <div className="chat-msg">
         {messages.map((msg, index) => {
-          let senderAvatar = "/assets/default_avatar.png";
+          let senderAvatar = {defaultAvatar};
           let senderName = "Unknown User";
 
           // Handling avatar and name display based on group or 1-on-1 chat
@@ -421,12 +422,12 @@ const ChatBox = () => {
             }
           } else if (msg.sId === chatUser.rId) {
             senderAvatar =
-              chatUser.userData?.avatar || "/assets/default_avatar.png";
+              chatUser.userData?.photoURL || {defaultAvatar};
             senderName = `${chatUser.userData?.firstName || "Unknown"} ${
               chatUser.userData?.lastName || ""
             }`;
           } else {
-            senderAvatar = userData?.avatar || "/assets/default_avatar.png";
+            senderAvatar = userData?.photoURL || {defaultAvatar};
             senderName = `${userData?.firstName || "You"} ${
               userData?.lastName || ""
             }`;
@@ -543,8 +544,8 @@ const ChatBox = () => {
                     <img
                       className="profile-icon"
                       src={
-                        memberAvatars[member]?.avatar ||
-                        "/assets/default_avatar.png"
+                        memberAvatars[member]?.photoURL ||
+                        {defaultAvatar}
                       }
                       alt={memberAvatars[member]?.name || "User Avatar"}
                     />
@@ -555,7 +556,7 @@ const ChatBox = () => {
                   <li key={index}>
                     <img
                       className="profile-icon"
-                      src={user?.avatar || "/assets/default_avatar.png"}
+                      src={user?.photoURL || {defaultAvatar}}
                       alt={user?.firstName || "User Avatar"}
                     />
                     <p>{`${user?.firstName || "Unknown"} ${

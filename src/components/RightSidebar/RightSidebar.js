@@ -14,7 +14,7 @@ const RightSidebar = () => {
       <div className="rs-profile">
         {/* Display user's avatar, fallback to default if no avatar is available */}
         <img
-          src={userData.avatar || "/assets/default_avatar.png"}
+          src={userData.photoURL || "/assets/default_avatar.png"}
           alt="Profile Icon"
           className="profile-pic"
         />

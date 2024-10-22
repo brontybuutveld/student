@@ -17,6 +17,7 @@ import {
 } from "firebase/firestore";
 import { toast } from "react-toastify";
 import CreateGroup from "../../CreateGroup";
+import defaultAvatar from "../../components/images/placeholder.png";
 
 const LeftSidebar = () => {
   const {
@@ -248,7 +249,7 @@ const LeftSidebar = () => {
               onClick={() => addChat(user)} // Add chat with the selected user
             >
               <img
-                src={user.avatar || "/assets/default_avatar.png"}
+                src={user.avatar || {defaultAvatar}}
                 alt="User Avatar"
                 className="profile-icon"
               />
@@ -271,8 +272,8 @@ const LeftSidebar = () => {
               <img
                 src={
                   chat.isGroup
-                    ? chat.groupData?.groupAvatar || "/assets/group_avatar.png"
-                    : chat.userData?.avatar || "/assets/default_avatar.png"
+                    ? chat.groupData?.groupAvatar || {defaultAvatar}
+                    : chat.userData?.avatar || {defaultAvatar}
                 }
                 alt="Chat Avatar"
                 className="profile-icon"
