@@ -57,10 +57,44 @@
 .friends {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 20px;
+  gap: 15px;
+  padding: 12px 15px;
   cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.friends img.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.friends p.chat-name {
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 5px;
+}
+
+.friends p.last-message {
+  color: #b5b5b5;
   font-size: 13px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.friends:hover .chat-name,
+.friends:hover .last-message {
+  color: white;
 }
 
 .friends div {
@@ -74,9 +108,78 @@
 }
 
 .friends:hover {
-  background-color: #077eff;
+  background-color: #005bb5;
 }
 
 .friends:hover span {
   color: white;
+}
+
+.friend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  margin-bottom: 8px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.friend-item label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.friend-item input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.friend-item img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.friend-item p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.friends-list {
+  max-width: 100%;
+  margin-top: 20px;
+  overflow-y: auto;
+}
+
+.add-group-btn {
+  background-color: #077eff;
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: auto;
+}
+
+.add-group-btn:hover {
+  background-color: #005bb5;
+}
+
+.add-group-btn:focus {
+  outline: none;
+}
+
+.add-group-btn:active {
+  background-color: #004494;
 }

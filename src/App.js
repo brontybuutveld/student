@@ -9,7 +9,6 @@ import UserProfile from "./pages/UserProfile";
 import UserHome from "./pages/UserHome";
 import Upload from "./pages/Upload";
 import AppContextProvider, { AppContext } from "./context/AppContext";
-import { useContext } from "react";
 
 function App() {
   return (

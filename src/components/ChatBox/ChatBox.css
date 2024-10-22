@@ -1,23 +1,66 @@
 .chat-box,
 .left-sidebar,
 .right-sidebar {
-  height: 100vh; /* Full viewport height */
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #c6c6c6;
+}
+
 .chat-user {
-  padding: 15px 20px; /* Adjust padding for more spacing */
   display: flex;
   align-items: center;
   gap: 15px;
-  border-bottom: 1px solid #c6c6c6;
 }
 
 .chat-user img {
   width: 45px;
   height: 45px;
   border-radius: 50%;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-name {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.user-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.online {
+  background-color: #00ff00;
+}
+
+.status-dot.offline {
+  background-color: #cccccc;
+}
+
+.status-text {
+  font-size: 12px;
+  color: #999999;
 }
 
 .chat-user p {
@@ -66,6 +109,9 @@
 
 .chat-input label img {
   width: 22px;
+  margin-top: -5px;
+  vertical-align: middle;
+  cursor: pointer;
 }
 
 .chat-input input {
@@ -89,10 +135,12 @@
 .s-msg div img.profile-icon,
 .r-msg div img.profile-icon {
   width: 40px;
-  aspect-ratio: 1/1;
+  height: 40px;
   border-radius: 50%;
   margin-right: 15px;
   object-fit: cover;
+  align-self: center;
+  margin-top: -5px;
 }
 
 .msg-image {
@@ -102,12 +150,13 @@
   height: auto;
   border-radius: 8px;
   object-fit: contain;
+  align-self: center;
 }
 
 .s-msg,
 .r-msg {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 15px;
   max-width: 70%;
   word-wrap: break-word;
@@ -260,4 +309,67 @@
 .file-preview {
   display: flex;
   align-items: center;
+}
+
+.s-msg .sender-name,
+.r-msg .sender-name {
+  font-weight: bold;
+  font-size: 14px;
+  color: #383838;
+  margin-bottom: 5px;
+}
+
+.user-count-container {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.user-count {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.users-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
+}
+
+.user-count p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.user-list-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 150px;
+}
+
+.user-list-dropdown ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 10px;
+}
+
+.user-list-dropdown li {
+  display: flex;
+  align-items: center;
+  padding: 5px 0;
+}
+
+.user-list-dropdown li img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 10px;
 }

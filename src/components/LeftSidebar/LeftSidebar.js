@@ -16,6 +16,7 @@ import {
   where,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
+import CreateGroup from "../../CreateGroup";
 
 const LeftSidebar = () => {
   const {
@@ -30,56 +31,69 @@ const LeftSidebar = () => {
   const [chatList, setChatList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
+  const [showGroupModal, setShowGroupModal] = useState(false);
+
+  const toggleGroupModal = () => {
+    setShowGroupModal((prevState) => !prevState);
+  };
 
   useEffect(() => {
     if (!userData?.uid) {
-      console.log("No userData available.");
       return;
     }
 
-    console.log("Fetching chat data for user:", userData.uid);
-
     const chatsRef = doc(db, "chats", userData.uid);
 
-    // Listen for changes in the users chat data
     const unsubscribe = onSnapshot(chatsRef, async (snapshot) => {
       if (snapshot.exists()) {
         const chatsData = snapshot.data().chatsData || [];
 
-        console.log("Fetched chat data:", chatsData);
-
-        // Fetch user data for each chat
         const promises = chatsData.map(async (chat) => {
-          const userRef = doc(db, "users", chat.rId);
-          const userSnapshot = await getDoc(userRef);
-          if (userSnapshot.exists()) {
-            const user = userSnapshot.data();
-            console.log(
-              `Fetched user data for chat with rId ${chat.rId}:`,
-              user
-            );
-            return {
-              ...chat,
-              userData: user, // Attach user data to the chat
-            };
+          if (chat.isGroup) {
+            const groupRef = doc(db, "groups", chat.rId);
+            const groupSnapshot = await getDoc(groupRef);
+            if (groupSnapshot.exists()) {
+              const group = groupSnapshot.data();
+              return {
+                ...chat,
+                groupData: group,
+              };
+            } else {
+              return null;
+            }
           } else {
-            console.error("User data not found for chat:", chat.rId);
-            return null;
+            const userRef = doc(db, "users", chat.rId);
+            const userSnapshot = await getDoc(userRef);
+            if (userSnapshot.exists()) {
+              const user = userSnapshot.data();
+              return {
+                ...chat,
+                userData: user,
+              };
+            } else {
+              return null;
+            }
           }
         });
 
         const resolvedChats = await Promise.all(promises);
 
-        // Filter out the logged in users own profile
-        const uniqueChats = resolvedChats.filter(
-          (chat) => chat && chat.rId !== userData.uid
-        );
+        // Ensure uniqueness using messageId or rId, then sort by updatedAt
+        const uniqueChats = Array.from(
+          new Map(
+            resolvedChats
+              .filter(Boolean)
+              .map((chat) => [chat.rId || chat.messageId, chat])
+          ).values()
+        ).sort((a, b) => {
+          const aUpdatedAt = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
+          const bUpdatedAt = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
+          return bUpdatedAt - aUpdatedAt; // Descending order (latest at the top)
+        });
 
-        setChatList(uniqueChats);
-        console.log("Chat list updated:", uniqueChats);
+        setChatList(uniqueChats); // Set only unique and sorted chats
       } else {
-        console.log("No chat data found for user:", userData.uid);
-        setChatList([]);
+        setChatList([]); // No chats available
       }
     });
 
@@ -96,7 +110,6 @@ const LeftSidebar = () => {
 
     setShowSearch(true);
 
-    // Search users by first name
     const usersRef = collection(db, "users");
     const firstNameQuery = query(usersRef, where("firstName", "==", input));
     const searchSnapshot = await getDocs(firstNameQuery);
@@ -105,16 +118,11 @@ const LeftSidebar = () => {
       ...doc.data(),
     }));
 
-    console.log("Search results for input:", input, results);
-
     setSearchResults(results);
   };
 
   const addChat = async (user) => {
-    console.log("Clicked user details:", user);
-
     if (!user?.id || !userData?.uid) {
-      console.error("User or userData ID is missing.");
       return;
     }
 
@@ -124,46 +132,37 @@ const LeftSidebar = () => {
     try {
       const userChatsSnapshot = await getDoc(chatsRef);
 
-      // Ensure chatsData exists and is an array
       let userChatsData = userChatsSnapshot.exists()
         ? userChatsSnapshot.data().chatsData || []
         : [];
 
-      // Check if the chat already exists
       let existingChat = userChatsData.find((chat) => chat.rId === user.id);
 
       let newMessageRef;
 
       if (existingChat) {
-        // Chat already exists use the existing one
+        // Update the `updatedAt` timestamp for one-on-one chats when a new message is added
         newMessageRef = doc(messagesRef, existingChat.messageId);
-        console.log(
-          "Using existing chat with messageId:",
-          existingChat.messageId
-        );
-
         await updateDoc(newMessageRef, {
           updatedAt: serverTimestamp(),
         });
       } else {
-        // Create new chat if none exists
+        // Create a new chat if it doesn't exist
         newMessageRef = doc(messagesRef);
         await setDoc(newMessageRef, {
           createdAt: serverTimestamp(),
           messages: [],
         });
 
-        console.log("Created new chat with messageId:", newMessageRef.id);
-
         const newChatData = {
           messageId: newMessageRef.id,
           lastMessage: "",
           rId: user.id,
-          updatedAt: Date.now(),
+          updatedAt: serverTimestamp(),
           messageSeen: true,
         };
 
-        // Update both users chatsData in Firestore
+        // Update the chats for both users
         await Promise.all([
           setDoc(
             doc(db, "chats", user.id),
@@ -172,7 +171,7 @@ const LeftSidebar = () => {
                 messageId: newMessageRef.id,
                 lastMessage: "",
                 rId: userData.uid,
-                updatedAt: Date.now(),
+                updatedAt: serverTimestamp(), // Make sure to set this here too
                 messageSeen: false,
               }),
             },
@@ -200,70 +199,117 @@ const LeftSidebar = () => {
 
       setChatVisible(true);
       setMessagesId(newMessageRef.id);
-    } catch (error) {
-      console.error("Error creating chat:", error);
-    }
+    } catch (error) {}
   };
 
   const setChat = async (item) => {
-    console.log("Setting chat for selected chat item:", item);
-    setMessagesId(item.messageId);
-    setChatUser(item);
+    if (item.isGroup) {
+      if (item.groupData?.messagesId) {
+        setMessagesId(item.groupData.messagesId);
+      }
+      setChatUser({
+        messageId: item.groupData.messagesId,
+        groupName: item.groupData.groupName,
+        groupAvatar: item.groupData.groupAvatar || "/assets/group_avatar.png",
+        rId: item.rId,
+        isGroup: true,
+        lastMessage: item.lastMessage || "",
+      });
+    } else {
+      setMessagesId(item.messageId);
+      setChatUser(item);
+    }
+
+    setChatVisible(true);
   };
 
   return (
     <div className="ls">
       <div className="ls-search">
+        {/* Search bar for searching users */}
         <input
           type="text"
           placeholder="Search users..."
-          onChange={handleSearch}
+          onChange={handleSearch} // Calls the function to search for users
         />
+        {/* Button to open the group creation modal */}
+        <button className="add-group-btn" onClick={toggleGroupModal}>
+          +
+        </button>
       </div>
+
       <div className="ls-list">
+        {/* If search is active and results are found, show search results */}
         {showSearch && searchResults.length > 0 ? (
           searchResults.map((user) => (
             <div
               key={user.id}
               className="friends"
-              onClick={() => addChat(user)}
+              onClick={() => addChat(user)} // Add chat with the selected user
             >
-              {/* Ensure the avatar URL is displayed, fallback to default if missing */}
               <img
                 src={user.avatar || "/assets/default_avatar.png"}
                 alt="User Avatar"
                 className="profile-icon"
               />
               <div className="chat-info">
-                <p className="chat-name">{`${user.firstName} ${user.lastName}`}</p>
-              </div>
-            </div>
-          ))
-        ) : chatList && chatList.length > 0 ? (
-          chatList.map((chat) => (
-            <div
-              key={chat.messageId}
-              className="friends"
-              onClick={() => setChat(chat)}
-            >
-              {/* Display the avatar from chat.userData, fallback to default if not available */}
-              <img
-                src={chat.userData?.avatar || "/assets/default_avatar.png"}
-                alt="User Avatar"
-                className="profile-icon"
-              />
-              <div className="chat-info">
-                <p className="chat-name">{`${chat.userData.firstName} ${chat.userData.lastName}`}</p>
-                <p className="last-message">
-                  {chat.lastMessage || "No messages yet"}
+                <p className="chat-name">
+                  {`${user.firstName || ""} ${user.lastName || ""}`}{" "}
+                  {/* Display user's full name */}
                 </p>
               </div>
             </div>
           ))
+        ) : chatList && chatList.length > 0 ? (
+          /* If no search is happening, display the list of chats */
+          chatList.map((chat) => (
+            <div
+              key={chat.messageId || chat.rId} // Ensure each chat has a unique key
+              className="friends"
+              onClick={() => setChat(chat)} // Set the clicked chat as active
+            >
+              <img
+                src={
+                  chat.isGroup
+                    ? chat.groupData?.groupAvatar || "/assets/group_avatar.png"
+                    : chat.userData?.avatar || "/assets/default_avatar.png"
+                }
+                alt="Chat Avatar"
+                className="profile-icon"
+              />
+              <div className="chat-info">
+                {chat.isGroup ? (
+                  <>
+                    {/* For group chats, show group name and last message */}
+                    <p className="chat-name">
+                      {chat.groupData?.groupName || "Unnamed Group"}
+                    </p>
+                    <p className="last-message">
+                      {chat.lastMessage || "No messages yet"}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    {/* For one-on-one chats, show user name and last message */}
+                    <p className="chat-name">{`${
+                      chat.userData?.firstName || ""
+                    } ${chat.userData?.lastName || ""}`}</p>
+                    <p className="last-message">
+                      {chat.lastMessage || "No messages yet"}
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+          ))
         ) : (
+          // If no chats are found, show this message
           <p>No chats found.</p>
         )}
       </div>
+
+      {/* Show the group creation modal if it's toggled */}
+      {showGroupModal && <CreateGroup closeModal={toggleGroupModal} />}
     </div>
   );
 };
