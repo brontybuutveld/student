@@ -35,14 +35,16 @@ a:link,
 a:visited,
 a:active,
 a:hover {
+  color: lightgrey;
   text-decoration: none;
 }
 
 button, input[type="submit"], input[type="reset"] {
-	color: inherit;
-	border: none;
-	outline: inherit;
+  color: inherit;
+  border: none;
+  outline: inherit;
 }
+
 
 footer {
   background-color: rgb(50, 50, 50);
@@ -214,210 +216,113 @@ body {
   border-radius: 10px;
 }
 
-/* file upload styling */
-.upload-page {
-    background: linear-gradient(var(--maincolor) 0%, var(--maincoloralt) 100%);
-    min-height:100vh;
-}
-
-.file-list, .upload-title {
-    display: flex;
-    flex-direction: column;
-    width: 95vw;
-    padding: 10px;
-    margin: auto;
-    border-radius: 10px;
-    background-color: var(--white);
-}
-
-.file-list-top {
-    display: flex;
-    justify-content: space-between;
-    width:100%;
-    color: var(--black);
-    padding: 0.25rem;
-    margin-bottom: 0.8rem;
-}
-
-.upload-title {
-    background: none;
-}
-
-.upload-bar {
-    display:flex;
-    align-items: center;
-    background-color: var(--white);
-    color: var(--black);
-    padding: 2vh;
-    margin: auto;
-    margin-bottom: 5vh;
-    width: 95vw;
-    border-radius: 10px;
-}
-
-.upload-bar-section {
-    display: flex;
-    align-items: center;
-    padding: 0 1rem;
-    gap: 1rem;
-}
-
-.upload-bar-section:first-child {
-    border-right: 2px solid var(--grey);
-}
-
-.file-list-header, .file-item {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    align-items: center;
-    padding: 12px;
-    background-color: var(--white);
-    color: var(--black);
-    max-height: max-content;
-}
-
-/* header containing titles of each column */
-.file-list-header {
-    font-weight: bold;
-    background-color: var(--maincoloralt);
-    color: var(--white); 
-    border-radius: 5px;
-}
-
-/* each file except last has border separation */
-.file-item:not(:last-child) {
-    border-bottom: 1px solid var(--grey);
-}
-
-.file-item:hover {
-    background-color: var(--grey);
-    cursor: pointer;
-}
-
-.file-item:active {
-    background-color: var(--maincoloralt);
-}
-
-.file-item span, .file-item a {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.file-item a {
-    color: var(--black);
-    text-decoration: none;
-}
-
-.file-item button {
-    padding: 6px 12px;
-    cursor: pointer;
-    border: none;
+.loading {
+  font-size: 50px;
+  color: white;
 }
 
 /* file upload styling */
 .upload-page {
-    background: linear-gradient(var(--maincolor) 0%, var(--maincoloralt) 100%);
-    min-height:100vh;
+  background: linear-gradient(var(--maincolor) 0%, var(--maincoloralt) 100%);
+  min-height: 100vh;
 }
 
 .file-list, .upload-title {
-    display: flex;
-    flex-direction: column;
-    width: 95vw;
-    padding: 10px;
-    margin: auto;
-    border-radius: 10px;
-    background-color: var(--white);
+  display: flex;
+  flex-direction: column;
+  width: 95vw;
+  padding: 10px;
+  margin: auto;
+  border-radius: 10px;
+  background-color: var(--white);
 }
 
 .file-list-top {
-    display: flex;
-    justify-content: space-between;
-    width:100%;
-    color: var(--black);
-    padding: 0.25rem;
-    margin-bottom: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  width:100%;
+  color: var(--black);
+  padding: 0.25rem;
+  margin-bottom: 0.8rem;
 }
 
 .upload-title {
-    background: none;
+  background: none;
 }
 
 .upload-bar {
-    display:flex;
-    align-items: center;
-    background-color: var(--white);
-    color: var(--black);
-    padding: 2vh;
-    margin: auto;
-    margin-bottom: 5vh;
-    width: 95vw;
-    border-radius: 10px;
+  display: flex;
+  align-items: center;
+  background-color: var(--white);
+  color: var(--black);
+  padding: 2vh;
+  margin: auto;
+  margin-bottom: 5vh;
+  width: 95vw;
+  border-radius: 10px;
 }
 
 .upload-bar-section {
-    display: flex;
-    align-items: center;
-    padding: 0 1rem;
-    gap: 1rem;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  gap: 1rem;
 }
 
 .upload-bar-section:first-child {
-    border-right: 2px solid var(--grey);
+  border-right: 2px solid var(--grey);
 }
 
 .file-list-header, .file-item {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    align-items: center;
-    padding: 12px;
-    background-color: var(--white);
-    color: var(--black);
-    max-height: max-content;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  align-items: center;
+  padding: 12px;
+  background-color: var(--white);
+  color: var(--black);
+  max-height: max-content;
 }
 
 /* header containing titles of each column */
 .file-list-header {
-    font-weight: bold;
-    background-color: var(--maincoloralt);
-    color: var(--white); 
-    border-radius: 5px;
+  font-weight: bold;
+  background-color: var(--maincoloralt);
+  color: var(--white); 
+  border-radius: 5px;
 }
 
 /* each file except last has border separation */
 .file-item:not(:last-child) {
-    border-bottom: 1px solid var(--grey);
+  border-bottom: 1px solid var(--grey);
 }
 
 .file-item:hover {
-    background-color: var(--grey);
-    cursor: pointer;
+  background-color: var(--grey);
+  cursor: pointer;
 }
 
 .file-item:active {
-    background-color: var(--maincoloralt);
+  background-color: var(--maincoloralt);
 }
 
 .file-item span, .file-item a {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .file-item a {
-    color: var(--black);
-    text-decoration: none;
+  color: var(--black);
+  text-decoration: none;
 }
 
 .file-item button {
-    padding: 6px 12px;
-    cursor: pointer;
-    border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: none;
 }
 
 /* profile styling */
-
 .profile-container {
   background-color: var(--maincolordark);
   color: var(--black);
@@ -482,7 +387,6 @@ body {
 .profile-copy-icon {
   width: 20px;
   padding: 0 3px 3px 0;
-  
 }
 
 /* level styling */
@@ -532,7 +436,6 @@ section {
 }
 
 /* Search Profile styling */
-
 .search-main-box {
   width: 100vw;
   min-height: 100vh;
@@ -575,5 +478,5 @@ section {
 
 .search-result p {
   margin: 0 0.3rem;
-
 }
+

@@ -1,21 +1,50 @@
 /* General Styling */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    text-align: center;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  text-align: center;
 }
 
 header {
-    background-color: #4CAF50;
-    color: white;
-    padding: 1em 0;
+  background-color: #4caf50;
+  color: white;
+  padding: 1em 0;
 }
 
 section {
-    background-color: #fff;
-    margin: 50px auto;
-    padding: 20px;
-    border-radius: 10px;
-    width: 300px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Star Rating Styling */
+.star-rating {
+  font-size: 2em;
+  display: inline-block;
+}
+
+.star {
+  color: #ccc; /* Empty star color */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.star.filled {
+  color: gold; /* Filled star color */
+}
+
+/* Hover Effect */
+.star:hover,
+.star:hover ~ .star {
+  color: gold; /* Color on hover */
+}
+
+/* Level Image Styling */
+#level-display img {
+  width: 100px;
+  height: 100px;
+  margin-top: 20px;
 }
