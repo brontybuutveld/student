@@ -2,7 +2,7 @@ import Header from "../components/Header";
 import calendarIcon from "../components/images/calendar-icon.jpg";
 import chatIcon from "../components/images/chat-icon.jpg";
 import filesIcon from "../components/images/files-icon.jpg";
-import notesIcon from "../components/images/notes-icon.jpg";
+import notesIcon from "../components/images/notes-icon.jpeg";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";

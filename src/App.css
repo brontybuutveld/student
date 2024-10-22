@@ -222,7 +222,8 @@ body {
 
 .navpage-image {
   width: 100%;
-  height: auto;
+  max-height: 20vh;
+  object-fit:cover;
   border-radius: 10px;
 }
 
