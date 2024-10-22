@@ -4,21 +4,31 @@ import LeftSidebar from "../components/LeftSidebar/LeftSidebar";
 import ChatBox from "../components/ChatBox/ChatBox";
 import RightSidebar from "../components/RightSidebar/RightSidebar";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth, db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { auth } from "../firebase";
 import { AppContext } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 
 const Chat = () => {
-  const { userData } = useContext(AppContext);
+  const { userData } = useContext(AppContext); // Access user data from context
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
+  // Ensure the user is authenticated and handle loading state
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigate("/home"); // Redirect to home if not signed in
+      }
+    });
+
+    // Stop loading once userData is available
     if (userData) {
       setLoading(false);
     }
-  }, [userData]);
+
+    return () => unsubscribe(); // Cleanup listener
+  }, [userData, navigate]);
 
   if (loading) {
     return (

@@ -1,10 +1,10 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
+import { getAuth, onAuthStateChanged, updateProfile, signOut } from "firebase/auth";
 import { getStorage, uploadBytes, ref, getDownloadURL } from "firebase/storage";
 import { getFirestore, getDoc, doc, updateDoc } from "firebase/firestore";
 import { useState, useEffect } from "react";
 
-// change later
+// Firebase configuration (with environment variables for security)
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -20,7 +20,7 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-// will return current logged in user and user data
+// Custom hook to get the current logged-in user and their data from Firestore
 export function useAuth() {
   const [currentUser, setCurrentUser] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -29,7 +29,7 @@ export function useAuth() {
     const unsub = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       if (user) {
-        // get user data from Firestore
+        // Get user data from Firestore
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
           setUserData(userDoc.data());
@@ -44,19 +44,19 @@ export function useAuth() {
   return { currentUser, userData };
 }
 
-// storage file upload
+// Function for uploading profile pictures
 export async function uploadProfile(file, currentUser, setLoading) {
   try {
     const fileRef = ref(storage, `profiles/${currentUser.uid}_${file.name}`);
     setLoading(true);
 
-    // Upload file to Firebase Storage
+    // Upload the file to Firebase Storage
     const snapshot = await uploadBytes(fileRef, file);
 
-    // Get download URL
+    // Get the download URL for the uploaded file
     const photoURL = await getDownloadURL(fileRef);
 
-    // Update Firebase Auth user profile
+    // Update the user's Firebase Auth profile with the new photoURL
     await updateProfile(currentUser, { photoURL });
 
     // Update the user's document in Firestore with the avatar URL
@@ -72,3 +72,14 @@ export async function uploadProfile(file, currentUser, setLoading) {
     setLoading(false);
   }
 }
+
+// Function to handle user sign out
+export const handleSignOut = () => {
+  signOut(auth)
+    .then(() => {
+      console.log("User signed out.");
+    })
+    .catch((error) => {
+      console.error("Error signing out:", error);
+    });
+};

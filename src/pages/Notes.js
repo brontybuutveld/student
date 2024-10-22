@@ -1,10 +1,5 @@
 import Header from "../components/Header.js";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth"; 
-import { auth } from "../firebase"; 
-
-export default function CalendarPage() {
+export default function Notes() {
     const navigate = useNavigate();
 
     // Prevent signed out users from accessing
@@ -23,7 +18,7 @@ export default function CalendarPage() {
     return (
         <>
             <Header />
-            <h2>Calendar</h2>
+            <h2>Notes</h2>
         </>
     )
 };
