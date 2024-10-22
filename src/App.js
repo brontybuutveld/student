@@ -8,6 +8,7 @@ import UserProfile from "./pages/UserProfile";
 import UserHome from "./pages/UserHome";
 import Upload from "./pages/Upload";
 import SearchProfile from "./pages/SearchProfile";
+import  StickyNote  from "./components/Theme_StickyNote/StickyNote";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/chat" element={<Chat />} />
                     <Route path="/calendar" element={<CalendarPage />} />
+                    <Route path="/notes" element={<StickyNote />} />
                     <Route path="/" element={<Home />} />
                     <Route path="/profile/:userid" element={<UserProfile />} />
                     <Route path="/upload" element={<Upload />} />
