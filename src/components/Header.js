@@ -45,10 +45,10 @@ export default function Header() {
           <a className="header-right" href={`/profile/${currentUser.uid}`}>
             <img src={photoURL} alt="avatar" className="mini-avatar" />
           </a>
-          {/** not yet implemented */}
           <a className="rightbutton" href="/home" onClick={handleSignOut}>
             Sign out
           </a>
+          <a className="right-nobkg" href="/searchprofile">Search User</a>
         </>
       )}
     </div>

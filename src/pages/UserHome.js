@@ -1,5 +1,8 @@
 import Header from "../components/Header";
-import placeholder from "../components/images/placeholder.png";
+import calendarIcon from "../components/images/calendar-icon.jpg";
+import chatIcon from "../components/images/chat-icon.jpg";
+import filesIcon from "../components/images/files-icon.jpg";
+import notesIcon from "../components/images/notes-icon.jpeg";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
@@ -18,7 +21,7 @@ export default function NavPage() {
           navigate("/home");
         }
       });
-  
+
       // Cleanup listener
       return () => unsubscribe();
     }, [navigate]);
@@ -28,10 +31,10 @@ export default function NavPage() {
             <Header />
             <div className="navpage-container">
 
-                {/** calendar */}
+                {/** Calendar */}
                 <div className="navpage-item" onClick={() => window.location.href = "/calendar"}>
                     <div className="navpage-image">
-                        <img className="navpage-image" src={placeholder} />
+                        <img className="navpage-image" src={calendarIcon} alt="Calendar Icon" />
                     </div>
                     <div>
                         <h3>Calendar</h3>
@@ -39,10 +42,10 @@ export default function NavPage() {
                     </div>
                 </div>
 
-                {/** chat */}
+                {/** Chat */}
                 <div className="navpage-item" onClick={() => window.location.href = "/chat"}>
                     <div className="navpage-image">
-                        <img className="navpage-image" src={placeholder} /> {/** TO REPLACE WITH REAL IMG */}
+                        <img className="navpage-image" src={chatIcon} alt="Chat Icon" />
                     </div>
                     <div>
                         <h3>Chat</h3>
@@ -50,10 +53,10 @@ export default function NavPage() {
                     </div>
                 </div>
 
-                {/** notes app (to add) */}
+                {/** Sticky Notes */}
                 <div className="navpage-item" onClick={() => window.location.href = "/notes"}>
                     <div className="navpage-image">
-                        <img className="navpage-image" src={placeholder} />
+                        <img className="navpage-image" src={notesIcon} alt="Notes Icon" />
                     </div>
                     <div>
                         <h3>Sticky notes</h3>
@@ -61,10 +64,10 @@ export default function NavPage() {
                     </div>
                 </div>
 
-                {/** upload */}
+                {/** Files */}
                 <div className="navpage-item" onClick={() => window.location.href = "/upload"}>
                     <div className="navpage-image">
-                        <img className="navpage-image" src={placeholder} />
+                        <img className="navpage-image" src={filesIcon} alt="Files Icon" />
                     </div>
                     <div>
                         <h3>Your files</h3>

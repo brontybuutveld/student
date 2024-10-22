@@ -1,4 +1,3 @@
-// pages/UserProfile.js
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { db, useAuth } from "../firebase.js";
@@ -6,14 +5,18 @@ import { doc, getDoc } from "firebase/firestore";
 import Header from "../components/Header.js";
 import EditProfile from "../components/EditProfile";
 import Level from "../components/Level.js";
+import FriendRequestButton from "../components/FriendRequestButton.js";
+import FriendList from "../components/FriendList.js";
+import FriendRequests from "../components/FriendRequestList.js";
+import Calendar from "../components/Calendar.js";
+import placeholderIcon from "../components/images/placeholder.png";
 
 export default function UserProfile() {
   const copyIcon =
     "https://icon-library.com/images/copy-to-clipboard-icon/copy-to-clipboard-icon-1.jpg";
-  const { currentUser, userData } = useAuth();
-  const { userid } = useParams();
+  const { currentUser, userData } = useAuth(); // Current logged in user
+  const { userid } = useParams(); // user id of the profile
 
-  // UseState
   const [user, setUser] = useState({
     firstName: "",
     lastName: "",
@@ -24,7 +27,7 @@ export default function UserProfile() {
 
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const [photoURL, setPhotoURL] = useState(
-    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
+    {placeholderIcon}
   );
   const [userLoading, setUserLoading] = useState(true);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
@@ -51,15 +54,12 @@ export default function UserProfile() {
   // Fetch the user profile when the component loads
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (!currentUser) {
-        setUserLoading(true);
-        return;
-      }
+      setUserLoading(true);
 
-      setUserLoading(false);
+      if (!currentUser) return;
 
-      if (userid === currentUser?.uid && userData) {
-        // If the current user is viewing their profile
+      if (userid === currentUser.uid && userData) {
+        // Viewing own profile
         setUser({
           firstName: userData.firstName || "No first name",
           lastName: userData.lastName || "No last name",
@@ -68,43 +68,43 @@ export default function UserProfile() {
           level: userData.level || "Unknown",
         });
 
+        setPhotoURL(
+          currentUser.photoURL ||
+            {placeholderIcon}
+        );
         setIsCurrentUser(true);
       } else {
-        // Get another user's profile
-        const userDoc = await getDoc(doc(db, "users", userid));
+        // Viewing another user's profile
+        try {
+          const userDoc = await getDoc(doc(db, "users", userid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
 
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
+            setUser({
+              firstName: userData.firstName || "Unknown",
+              lastName: userData.lastName || "Unknown",
+              email: userData.email || "Unknown",
+              bio: userData.bio || "Unknown",
+              level: userData.level || "Unknown",
+            });
 
-          setUser({
-            firstName: userData.firstName || "Unknown",
-            lastName: userData.lastName || "Unknown",
-            email: userData.email || "Unknown",
-            bio: userData.bio || "Unknown",
-            level: userData.level || "Unknown",
-          });
-        } else {
-          setUser({
-            firstName: "Error getting user",
-            lastName: "",
-            email: "",
-            bio: "",
-            level: "",
-          });
+            setPhotoURL(
+              userData.photoURL ||
+                {placeholderIcon}
+            );
+          } else {
+            setUser({ firstName: "Error getting user", email: "" });
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
         }
-        setIsCurrentUser(false);
       }
+
+      setUserLoading(false);
     };
 
     fetchUserProfile();
   }, [userid, currentUser, userData]);
-
-  // Update the profile picture URL
-  useEffect(() => {
-    if (!userLoading && currentUser && currentUser.photoURL) {
-      setPhotoURL(currentUser.photoURL);
-    }
-  }, [currentUser, userLoading]);
 
   // if loading
   if (userLoading) {
@@ -116,6 +116,9 @@ export default function UserProfile() {
       <Header />
 
       <div className="profile-container">
+      <div className="profile-calendar">
+          <Calendar uid={userid} />
+        </div>
         <div className="profile-main-box">
           <div className="profile-box">
             <div className="profile-top">
@@ -126,7 +129,11 @@ export default function UserProfile() {
               </h3>
 
               {/** copy uid to clipboard */}
-                <img className="profile-copy-icon" src={copyIcon} onClick={copyUID} />
+              <img
+                className="profile-copy-icon"
+                src={copyIcon}
+                onClick={copyUID}
+              />
             </div>
 
             <div className="profile-info">
@@ -139,13 +146,12 @@ export default function UserProfile() {
             </div>
           </div>
 
-          {/** If other user AND logged in */}
           <div className="profile-button-box">
+            {/** If other user AND logged in */}
             {currentUser && !isCurrentUser && (
               <>
-                <button className="btn btn-primary profile-button">
-                  Follow
-                </button>
+                <FriendRequestButton requestedUserId={userid} />
+
                 <button className="btn btn-primary profile-button">
                   Message
                 </button>
@@ -164,14 +170,11 @@ export default function UserProfile() {
             {/** If current user is viewing their own profile */}
             {isCurrentUser && (
               <>
-                <a
-                  className="btn btn-primary profile-button"
-                  href="/searchprofile"
-                >
+                <a className="btn btn-primary" href="/searchprofile">
                   Search for other users
                 </a>
                 <button
-                  className="btn btn-primary profile-button"
+                  className="btn btn-primary"
                   onClick={handleEditProfileToggle}
                 >
                   {/** Change display text if edit is open */}
@@ -183,7 +186,15 @@ export default function UserProfile() {
               </>
             )}
           </div>
+
+          {isCurrentUser && (
+            <div className="friends-box">
+              <FriendList currentUserId={userid} />
+              <FriendRequests currentUserID={userid} />
+            </div>
+          )}
         </div>
+
       </div>
     </>
   );

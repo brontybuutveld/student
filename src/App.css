@@ -19,9 +19,17 @@ p {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+ul {
+  padding-left: 0;
+}
+
 li {
   text-decoration: none;
   list-style-type: none;
+}
+
+a {
+  color: var(--black);
 }
 
 a:link,
@@ -130,6 +138,10 @@ body {
   color: black;
 }
 
+.headerbar .right-nobkg {
+  float:right;
+}
+
 .headerbar .rightbutton {
   float: right;
   background-color: var(--accentcolor);
@@ -187,6 +199,7 @@ body {
   justify-content: space-between;
   width: 100%;
   height: 60rem;
+  z-index: 5;
 }
 
 .navpage-item {
@@ -212,137 +225,34 @@ body {
 
 .navpage-image {
   width: 100%;
-  height: auto;
+  max-height: 20vh;
+  object-fit:cover;
   border-radius: 10px;
-}
-
-.loading {
-  font-size: 50px;
-  color: white;
-}
-
-/* file upload styling */
-.upload-page {
-  background: linear-gradient(var(--maincolor) 0%, var(--maincoloralt) 100%);
-  min-height: 100vh;
-}
-
-.file-list, .upload-title {
-  display: flex;
-  flex-direction: column;
-  width: 95vw;
-  padding: 10px;
-  margin: auto;
-  border-radius: 10px;
-  background-color: var(--white);
-}
-
-.file-list-top {
-  display: flex;
-  justify-content: space-between;
-  width:100%;
-  color: var(--black);
-  padding: 0.25rem;
-  margin-bottom: 0.8rem;
-}
-
-.upload-title {
-  background: none;
-}
-
-.upload-bar {
-  display: flex;
-  align-items: center;
-  background-color: var(--white);
-  color: var(--black);
-  padding: 2vh;
-  margin: auto;
-  margin-bottom: 5vh;
-  width: 95vw;
-  border-radius: 10px;
-}
-
-.upload-bar-section {
-  display: flex;
-  align-items: center;
-  padding: 0 1rem;
-  gap: 1rem;
-}
-
-.upload-bar-section:first-child {
-  border-right: 2px solid var(--grey);
-}
-
-.file-list-header, .file-item {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  align-items: center;
-  padding: 12px;
-  background-color: var(--white);
-  color: var(--black);
-  max-height: max-content;
-}
-
-/* header containing titles of each column */
-.file-list-header {
-  font-weight: bold;
-  background-color: var(--maincoloralt);
-  color: var(--white); 
-  border-radius: 5px;
-}
-
-/* each file except last has border separation */
-.file-item:not(:last-child) {
-  border-bottom: 1px solid var(--grey);
-}
-
-.file-item:hover {
-  background-color: var(--grey);
-  cursor: pointer;
-}
-
-.file-item:active {
-  background-color: var(--maincoloralt);
-}
-
-.file-item span, .file-item a {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.file-item a {
-  color: var(--black);
-  text-decoration: none;
-}
-
-.file-item button {
-  padding: 6px 12px;
-  cursor: pointer;
-  border: none;
 }
 
 /* profile styling */
 .profile-container {
   background-color: var(--maincolordark);
   color: var(--black);
-  height: 100vh;
+  min-height: 110vh;
 }
 
 .profile-main-box {
-  width: 100vw;
-  display: flex;
-  justify-content: space-around;
-}
-
-.profile-box {
-  background-color: rgb(153, 153, 177);
+  width: 35vw;
   display: flex;
   flex-direction: column;
-  width: 50%;
-  margin-top: 50px;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.profile-box, .profile-button-box, .friends-box, .profile-calendar {
+  background-color: rgb(153, 161, 177);
+  display: flex;
+  flex-direction: column;
+  margin-top: 3vh;
   box-shadow: 5px 5px 5px 5px rgb(0, 0, 0);
   border-radius: 10px;
+  width: 95%;
 }
 
 .profile-top {
@@ -353,19 +263,52 @@ body {
   margin: 1rem;
 }
 
-.profile-button-box {
+.profile-button-box, .friends-box {
   background-color: var(--white);
-  box-shadow: 5px 5px 5px 5px rgb(0, 0, 0);
-  border-radius: 10px;
-  width: 40%;
-  margin-top: 50px;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
+  text-align: center;
+  padding: 8px 0;
 }
 
-.profile-button {
+.profile-button-box button, .profile-button-box a {
   margin: 10px 6vw;
+}
+
+.profile-calendar {
+  background-color: var(--white);
+  float:right;
+  max-width: 65vw;
+  padding: 1vh;
+  margin: 0;
+  border-radius: 0;
+}
+
+.calendar-page {
+  background-color: var(--white);
+  color: var(--black);
+  padding: 3vh;
+  position: sticky; /* prevent navbar overlap */
+}
+
+.friends-list {
+  padding: 0;
+  margin: 5px;
+}
+
+.friends-list li {
+  display: flex; /* Flexbox layout for horizontal alignment */
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 2px solid rgb(153, 161, 177);
+}
+
+.friends-link {
+  color: var(--maincolor);
+}
+
+.requests-box button {
+  margin: 2vh 0;
 }
 
 .profile-info {
@@ -480,3 +423,29 @@ section {
   margin: 0 0.3rem;
 }
 
+/* sticky notes */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.note-card {
+  background-color: #ffff88;
+  color: var(--black);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+input, textarea {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+button {
+  margin-right: 10px;
+}

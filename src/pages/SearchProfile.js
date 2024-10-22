@@ -141,6 +141,19 @@ const SearchProfile = () => {
                       className="btn search-result"
                       href={`/profile/${user.id}`}
                     >
+                      {/* Display mini avatar */}
+                      <img
+                        src={
+                          user.photoURL ||
+                          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
+                        }
+                        alt={`${user.firstName} ${user.lastName}'s avatar`}
+                        className="mini-avatar"
+                        onError={(e) => {
+                          e.target.src =
+                            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541";
+                        }}
+                      />
                       <p>
                         {user.firstName} {user.lastName}
                       </p>
