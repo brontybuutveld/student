@@ -211,7 +211,7 @@ const LeftSidebar = () => {
       setChatUser({
         messageId: item.groupData.messagesId,
         groupName: item.groupData.groupName,
-        groupAvatar: item.groupData.groupAvatar || "/assets/group_avatar.png",
+        groupAvatar: item.groupData.groupAvatar || {defaultAvatar},
         rId: item.rId,
         isGroup: true,
         lastMessage: item.lastMessage || "",
@@ -249,7 +249,7 @@ const LeftSidebar = () => {
               onClick={() => addChat(user)} // Add chat with the selected user
             >
               <img
-                src={user.avatar || {defaultAvatar}}
+                src={user.photoURL || {defaultAvatar}}
                 alt="User Avatar"
                 className="profile-icon"
               />

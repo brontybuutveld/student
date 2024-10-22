@@ -347,7 +347,7 @@ const ChatBox = () => {
               {/* Display group avatar and name if it's a group chat */}
               <img
                 className="profile-icon"
-                src={chatUser.groupAvatar || "/assets/group_avatar.png"}
+                src={chatUser.groupAvatar || {defaultAvatar}}
                 alt="Group Avatar"
               />
               <div className="user-info">
