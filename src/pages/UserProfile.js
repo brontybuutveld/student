@@ -9,6 +9,7 @@ import FriendRequestButton from "../components/FriendRequestButton.js";
 import FriendList from "../components/FriendList.js";
 import FriendRequests from "../components/FriendRequestList.js";
 import Calendar from "../components/Calendar.js";
+import placeholderIcon from "../components/images/placeholder.png";
 
 export default function UserProfile() {
   const copyIcon =
@@ -26,7 +27,7 @@ export default function UserProfile() {
 
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const [photoURL, setPhotoURL] = useState(
-    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
+    {placeholderIcon}
   );
   const [userLoading, setUserLoading] = useState(true);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
@@ -69,7 +70,7 @@ export default function UserProfile() {
 
         setPhotoURL(
           currentUser.photoURL ||
-            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
+            {placeholderIcon}
         );
         setIsCurrentUser(true);
       } else {
@@ -89,7 +90,7 @@ export default function UserProfile() {
 
             setPhotoURL(
               userData.photoURL ||
-                "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
+                {placeholderIcon}
             );
           } else {
             setUser({ firstName: "Error getting user", email: "" });
