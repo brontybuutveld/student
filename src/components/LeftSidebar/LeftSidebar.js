@@ -211,7 +211,7 @@ const LeftSidebar = () => {
       setChatUser({
         messageId: item.groupData.messagesId,
         groupName: item.groupData.groupName,
-        groupAvatar: item.groupData.groupAvatar || {defaultAvatar},
+        groupAvatar: item.groupData.groupAvatar || { defaultAvatar },
         rId: item.rId,
         isGroup: true,
         lastMessage: item.lastMessage || "",
@@ -249,7 +249,7 @@ const LeftSidebar = () => {
               onClick={() => addChat(user)} // Add chat with the selected user
             >
               <img
-                src={user.photoURL || {defaultAvatar}}
+                src={user.avatar || defaultAvatar} // Use 'avatar' for user avatar
                 alt="User Avatar"
                 className="profile-icon"
               />
@@ -272,8 +272,8 @@ const LeftSidebar = () => {
               <img
                 src={
                   chat.isGroup
-                    ? chat.groupData?.groupAvatar || {defaultAvatar}
-                    : chat.userData?.avatar || {defaultAvatar}
+                    ? chat.groupData?.groupAvatar || defaultAvatar
+                    : chat.userData?.avatar || defaultAvatar // Use 'avatar' for user avatar
                 }
                 alt="Chat Avatar"
                 className="profile-icon"

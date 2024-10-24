@@ -144,14 +144,14 @@ const SearchProfile = () => {
                       {/* Display mini avatar */}
                       <img
                         src={
-                          user.photoURL ||
-                          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
+                          user.avatar ||
+                          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
                         }
                         alt={`${user.firstName} ${user.lastName}'s avatar`}
                         className="mini-avatar"
                         onError={(e) => {
                           e.target.src =
-                            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541";
+                            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
                         }}
                       />
                       <p>

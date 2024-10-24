@@ -35,12 +35,14 @@
 .user-name {
   font-weight: bold;
   font-size: 16px;
+  display: flex;
+  align-items: center;
 }
 
 .user-status {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 15px;
 }
 
 .status-dot {
@@ -341,6 +343,7 @@
 .user-count p {
   margin: 0;
   font-size: 16px;
+  color: black;
 }
 
 .user-list-dropdown {
@@ -372,4 +375,8 @@
   height: 24px;
   border-radius: 50%;
   margin-right: 10px;
+}
+
+.user-list-dropdown li p {
+  color: black;
 }

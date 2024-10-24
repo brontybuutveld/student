@@ -51,7 +51,7 @@ const ChatBox = () => {
                 const memberData = memberDoc.data();
                 newMemberAvatars[memberId] = {
                   name: `${memberData.firstName} ${memberData.lastName}`,
-                  avatar: memberData.photoURL || {defaultAvatar},
+                  avatar: memberData.photoURL || { defaultAvatar },
                 };
               }
             } catch (error) {
@@ -347,7 +347,7 @@ const ChatBox = () => {
               {/* Display group avatar and name if it's a group chat */}
               <img
                 className="profile-icon"
-                src={chatUser.groupAvatar || {defaultAvatar}}
+                src={chatUser.groupAvatar || defaultAvatar} // Fixed the curly braces here
                 alt="Group Avatar"
               />
               <div className="user-info">
@@ -361,7 +361,7 @@ const ChatBox = () => {
               {/* Display user avatar and name for 1-on-1 chat */}
               <img
                 className="profile-icon"
-                src={chatUser.userData?.photoURL || {defaultAvatar}}
+                src={chatUser.userData?.avatar || defaultAvatar} // Changed from photoURL to avatar
                 alt="User Avatar"
               />
               <div className="user-info">
@@ -410,24 +410,23 @@ const ChatBox = () => {
       {/* Chat message section */}
       <div className="chat-msg">
         {messages.map((msg, index) => {
-          let senderAvatar = {defaultAvatar};
+          let senderAvatar = defaultAvatar;
           let senderName = "Unknown User";
 
           // Handling avatar and name display based on group or 1-on-1 chat
           if (chatUser.isGroup) {
             const memberExists = chatUser.groupData?.members?.includes(msg.sId);
             if (memberExists && memberAvatars[msg.sId]) {
-              senderAvatar = memberAvatars[msg.sId].avatar;
+              senderAvatar = memberAvatars[msg.sId].avatar || defaultAvatar; // Using avatar
               senderName = memberAvatars[msg.sId].name;
             }
           } else if (msg.sId === chatUser.rId) {
-            senderAvatar =
-              chatUser.userData?.photoURL || {defaultAvatar};
+            senderAvatar = chatUser.userData?.avatar || defaultAvatar; // Using avatar instead of photoURL
             senderName = `${chatUser.userData?.firstName || "Unknown"} ${
               chatUser.userData?.lastName || ""
             }`;
           } else {
-            senderAvatar = userData?.photoURL || {defaultAvatar};
+            senderAvatar = userData?.avatar || defaultAvatar; // Changed to avatar for current user
             senderName = `${userData?.firstName || "You"} ${
               userData?.lastName || ""
             }`;
@@ -543,10 +542,7 @@ const ChatBox = () => {
                   <li key={index}>
                     <img
                       className="profile-icon"
-                      src={
-                        memberAvatars[member]?.photoURL ||
-                        {defaultAvatar}
-                      }
+                      src={memberAvatars[member]?.avatar || defaultAvatar} // Updated to avatar
                       alt={memberAvatars[member]?.name || "User Avatar"}
                     />
                     <p>{memberAvatars[member]?.name || `User ${index + 1}`}</p>
@@ -556,7 +552,7 @@ const ChatBox = () => {
                   <li key={index}>
                     <img
                       className="profile-icon"
-                      src={user?.photoURL || {defaultAvatar}}
+                      src={user?.avatar || defaultAvatar} // Changed to avatar
                       alt={user?.firstName || "User Avatar"}
                     />
                     <p>{`${user?.firstName || "Unknown"} ${
