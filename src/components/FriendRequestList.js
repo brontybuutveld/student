@@ -5,6 +5,8 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  getDoc,
+  setDoc,
 } from "firebase/firestore";
 import { db } from "../firebase.js";
 
@@ -39,6 +41,17 @@ const FriendRequests = ({ currentUserID }) => {
     const friendRef = doc(db, "friends", friendID);
 
     try {
+      // Check if both documents exist; create them if necessary
+      const userDoc = await getDoc(userRef);
+      if (!userDoc.exists()) {
+        await setDoc(userRef, { friends: [], requests: [] });
+      }
+
+      const friendDoc = await getDoc(friendRef);
+      if (!friendDoc.exists()) {
+        await setDoc(friendRef, { friends: [], requests: [] });
+      }
+
       // Update the current user's friend list and remove the request
       await updateDoc(userRef, {
         friends: arrayUnion(friendID), // Add the requester to the current user's friends
@@ -51,7 +64,6 @@ const FriendRequests = ({ currentUserID }) => {
       });
 
       console.log("Friend request accepted!");
-      // Optionally, remove the accepted friend from the requests state
       setRequests((prevRequests) =>
         prevRequests.filter((id) => id !== friendID)
       );
