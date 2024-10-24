@@ -115,7 +115,7 @@ export default function UserProfile() {
       <Header />
 
       <div className="profile-container">
-      <div className="profile-calendar">
+        <div className="profile-calendar">
           <Calendar uidProp={userid} />
         </div>
         <div className="profile-main-box">

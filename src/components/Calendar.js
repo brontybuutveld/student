@@ -11,6 +11,7 @@ import $ from "jquery";
 export default function Calendar({ uidProp }) { // Use uid from props
     const [JSONURL, setJSONURL] = useState(null);
     const [JSONREF, setJSONREF] = useState(null);
+    const [colour, setColour] = useState("blue");
     const [uid, setUID] = useState(uidProp);
     const calendarRef = useRef(null);
 
@@ -27,6 +28,7 @@ export default function Calendar({ uidProp }) { // Use uid from props
             if (uid !== user.uid) {
                 console.log(user.uid);
                 setUID(user.uid);
+                setColour("red");
             }
         });
 
@@ -39,12 +41,12 @@ export default function Calendar({ uidProp }) { // Use uid from props
 
             // Fetch ICS file
             getDownloadURL(icsRef).then((downloadURL) => {
-                calendarApi.addEventSource({ url: downloadURL, format: 'ics' });
+                calendarApi.addEventSource({ url: downloadURL, format: 'ics', color: colour });
             }).catch(console.error);
 
             // Fetch JSON file
             getDownloadURL(jsonRef).then((downloadURL) => {
-                calendarApi.addEventSource({ url: downloadURL });
+                calendarApi.addEventSource({ url: downloadURL, color: colour });
                 setJSONURL(downloadURL);
             }).catch(console.error);
         }
