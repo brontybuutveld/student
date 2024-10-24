@@ -1,19 +1,18 @@
-import Header from "./Header.js";
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import iCalendarPlugin from '@fullcalendar/icalendar';
 import {useEffect, useRef, useState} from "react";
-import {onAuthStateChanged} from "firebase/auth";
-import {auth, storage} from "../firebase.js";
-import {getDownloadURL, ref, getMetadata, uploadString, deleteObject} from "firebase/storage";
+import {storage, auth} from "../firebase.js";
+import {getDownloadURL, ref, uploadString, deleteObject} from "firebase/storage";
 import $ from "jquery";
 
-export default function Calendar({ uid }) { // Use uid from props
-    const [calURL, setCalURL] = useState(null);
+export default function Calendar({ uidProp }) { // Use uid from props
     const [JSONURL, setJSONURL] = useState(null);
-    const calendarRef = useRef()
+    const [JSONREF, setJSONREF] = useState(null);
+    const [uid, setUID] = useState(uidProp);
+    const calendarRef = useRef(null);
 
     let eventGuid = 0;
     function createEventId() {
@@ -22,40 +21,34 @@ export default function Calendar({ uid }) { // Use uid from props
 
     // Fetch calendar data based on uid (passed as prop)
     useEffect(() => {
-        if (!uid) return; // Ensure uid is provided
-
-        const fetchCalendarData = async () => {
-            try {
-                const icsRef = ref(storage, `users/${uid}/user.ics`);
-                const jsonRef = ref(storage, `users/${uid}/user.json`);
-
-                // Fetch ICS file
-                try {
-                    await getMetadata(icsRef);
-                    const downloadURL = await getDownloadURL(icsRef);
-                    setCalURL(downloadURL);
-                } catch (error) {
-                    if (error.code !== 'storage/object-not-found') {
-                        console.error("Error fetching ICS:", error);
-                    }
-                }
-
-                // Fetch JSON file
-                try {
-                    await getMetadata(jsonRef);
-                    const downloadURL = await getDownloadURL(jsonRef);
-                    setJSONURL(downloadURL);
-                } catch (error) {
-                    if (error.code !== 'storage/object-not-found') {
-                        console.error("Error fetching JSON:", error);
-                    }
-                }
-            } catch (err) {
-                console.error("Error fetching calendar data:", err);
+        const unsub = auth.onAuthStateChanged((user) => {
+            unsub();
+            setJSONREF(ref(storage, `users/${user.uid}/user.json`));
+            if (uid !== user.uid) {
+                console.log(user.uid);
+                setUID(user.uid);
             }
-        };
+        });
 
-        fetchCalendarData();
+        const fetchName = async () => {
+            if (!uid) return; // Ensure uid is provided
+
+            const icsRef = ref(storage, `users/${uid}/user.ics`);
+            const jsonRef = ref(storage, `users/${uid}/user.json`);
+            const calendarApi = calendarRef.current.getApi();
+
+            // Fetch ICS file
+            getDownloadURL(icsRef).then((downloadURL) => {
+                calendarApi.addEventSource({ url: downloadURL, format: 'ics' });
+            }).catch(console.error);
+
+            // Fetch JSON file
+            getDownloadURL(jsonRef).then((downloadURL) => {
+                calendarApi.addEventSource({ url: downloadURL });
+                setJSONURL(downloadURL);
+            }).catch(console.error);
+        }
+        fetchName();
     }, [uid]); // Fetch data when uid changes
 
     function handleDateSelect(selectInfo) {
@@ -92,12 +85,12 @@ export default function Calendar({ uid }) { // Use uid from props
         if (JSONURL) {
             $.getJSON(JSONURL, (data) => {
                 const updatedData = [...data, newEvent];
-                uploadString(ref(storage, `users/${uid}/user.json`), JSON.stringify(updatedData))
+                uploadString(JSONREF, JSON.stringify(updatedData))
                     .then(() => console.log('Event added'))
                     .catch(console.error);
             });
         } else {
-            uploadString(ref(storage, `users/${uid}/user.json`), JSON.stringify([newEvent]))
+            uploadString(JSONREF, JSON.stringify([newEvent]))
                 .then(() => console.log('Event added'))
                 .catch(console.error);
         }
@@ -115,14 +108,12 @@ export default function Calendar({ uid }) { // Use uid from props
                 const updatedData = data.filter(
                     (event) => JSON.stringify(event) !== JSON.stringify(eventToRemove)
                 );
-
-                const refPath = `users/${uid}/user.json`;
                 if (updatedData.length > 0) {
-                    uploadString(ref(storage, refPath), JSON.stringify(updatedData))
+                    uploadString(JSONREF, JSON.stringify(updatedData))
                         .then(() => console.log('Event removed'))
                         .catch(console.error);
                 } else {
-                    deleteObject(ref(storage, refPath))
+                    deleteObject(JSONREF)
                         .then(() => console.log('No events remaining'))
                         .catch(console.error);
                 }
@@ -148,26 +139,11 @@ export default function Calendar({ uid }) { // Use uid from props
                         selectable={true}
                         dayMaxEvents={true}
 
-                        eventSources={
-                            (calURL && JSONURL) ?
-                            [
-                                { url: calURL, format: 'ics' },
-                                { url: JSONURL }
-                            ] :
-                            calURL ?
-                            [{ url: calURL, format: 'ics' }] :
-                            JSONURL ?
-                            [{ url: JSONURL }] :
-                            []
-                        }
-
                         select={handleDateSelect}
                         eventClick={handleEventClick}
 
                         eventAdd={addEvent}
-                        //eventChange={function(){}}
                         eventRemove={removeEvent}
-
                     />
                 </div>
             </div>

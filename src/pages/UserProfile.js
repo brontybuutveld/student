@@ -12,8 +12,7 @@ import Calendar from "../components/Calendar.js";
 
 export default function UserProfile() {
   const placeholderIcon = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541";
-  const copyIcon =
-    "https://icon-library.com/images/copy-to-clipboard-icon/copy-to-clipboard-icon-1.jpg";
+  const copyIcon = "https://icon-library.com/images/copy-to-clipboard-icon/copy-to-clipboard-icon-1.jpg";
   const { currentUser, userData } = useAuth(); // Current logged in user
   const { userid } = useParams(); // user id of the profile
 
@@ -117,7 +116,7 @@ export default function UserProfile() {
 
       <div className="profile-container">
       <div className="profile-calendar">
-          <Calendar uid={userid} />
+          <Calendar uidProp={userid} />
         </div>
         <div className="profile-main-box">
           <div className="profile-box">
