@@ -78,3 +78,17 @@ input {
 .search-results div:hover {
   background-color: #f1f1f1;
 }
+
+.group-modal h3 {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.friend-list p {
+  color: #000;
+  font-size: 16px;
+  text-align: center;
+  margin: 10px 0;
+}

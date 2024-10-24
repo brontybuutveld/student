@@ -51,7 +51,7 @@ const ChatBox = () => {
                 const memberData = memberDoc.data();
                 newMemberAvatars[memberId] = {
                   name: `${memberData.firstName} ${memberData.lastName}`,
-                  avatar: memberData.photoURL || {defaultAvatar},
+                  avatar: memberData.photoURL || { defaultAvatar },
                 };
               }
             } catch (error) {
@@ -347,7 +347,7 @@ const ChatBox = () => {
               {/* Display group avatar and name if it's a group chat */}
               <img
                 className="profile-icon"
-                src={chatUser.groupAvatar || {defaultAvatar}}
+                src={chatUser.groupAvatar || defaultAvatar}
                 alt="Group Avatar"
               />
               <div className="user-info">
@@ -361,7 +361,11 @@ const ChatBox = () => {
               {/* Display user avatar and name for 1-on-1 chat */}
               <img
                 className="profile-icon"
-                src={chatUser.userData?.photoURL || {defaultAvatar}}
+                src={
+                  chatUser.userData?.avatar ||
+                  chatUser.userData?.photoURL ||
+                  defaultAvatar
+                }
                 alt="User Avatar"
               />
               <div className="user-info">
@@ -378,10 +382,11 @@ const ChatBox = () => {
                     <>
                       <span className="status-dot offline"></span>
                       <p className="status-text">
-                        Last seen{" "}
-                        {new Date(
-                          chatUser.userData?.lastSeen?.seconds * 1000
-                        ).toLocaleTimeString()}
+                        {chatUser.userData?.lastSeen
+                          ? `Last seen ${new Date(
+                              chatUser.userData.lastSeen.seconds * 1000
+                            ).toLocaleString()}`
+                          : "Last seen not available"}
                       </p>
                     </>
                   )}
@@ -410,31 +415,33 @@ const ChatBox = () => {
       {/* Chat message section */}
       <div className="chat-msg">
         {messages.map((msg, index) => {
-          let senderAvatar = {defaultAvatar};
+          let senderAvatar = defaultAvatar;
           let senderName = "Unknown User";
 
           // Handling avatar and name display based on group or 1-on-1 chat
           if (chatUser.isGroup) {
             const memberExists = chatUser.groupData?.members?.includes(msg.sId);
             if (memberExists && memberAvatars[msg.sId]) {
-              senderAvatar = memberAvatars[msg.sId].avatar;
+              senderAvatar = memberAvatars[msg.sId].avatar || defaultAvatar; // Using avatar
               senderName = memberAvatars[msg.sId].name;
             }
           } else if (msg.sId === chatUser.rId) {
             senderAvatar =
-              chatUser.userData?.photoURL || {defaultAvatar};
+              chatUser.userData?.avatar ||
+              chatUser.userData?.photoURL ||
+              defaultAvatar; // Using avatar or photoURL
             senderName = `${chatUser.userData?.firstName || "Unknown"} ${
               chatUser.userData?.lastName || ""
             }`;
           } else {
-            senderAvatar = userData?.photoURL || {defaultAvatar};
+            senderAvatar =
+              userData?.avatar || userData?.photoURL || defaultAvatar; // Changed to avatar or photoURL for current user
             senderName = `${userData?.firstName || "You"} ${
               userData?.lastName || ""
             }`;
           }
 
           return (
-            // Display each message, distinguishing between sent (r-msg) and received (s-msg) messages
             <div
               key={index}
               className={msg.sId === userData.uid ? "r-msg" : "s-msg"}
@@ -543,10 +550,7 @@ const ChatBox = () => {
                   <li key={index}>
                     <img
                       className="profile-icon"
-                      src={
-                        memberAvatars[member]?.photoURL ||
-                        {defaultAvatar}
-                      }
+                      src={memberAvatars[member]?.avatar || defaultAvatar}
                       alt={memberAvatars[member]?.name || "User Avatar"}
                     />
                     <p>{memberAvatars[member]?.name || `User ${index + 1}`}</p>
@@ -556,7 +560,7 @@ const ChatBox = () => {
                   <li key={index}>
                     <img
                       className="profile-icon"
-                      src={user?.photoURL || {defaultAvatar}}
+                      src={user?.avatar || user?.photoURL || defaultAvatar}
                       alt={user?.firstName || "User Avatar"}
                     />
                     <p>{`${user?.firstName || "Unknown"} ${
@@ -569,7 +573,6 @@ const ChatBox = () => {
       )}
     </div>
   ) : (
-    // Default welcome message when no chat is selected
     <div className={`chat-welcome ${chatVisible ? "" : "hidden"}`}>
       <p>Click on a user to start chatting!</p>
     </div>
