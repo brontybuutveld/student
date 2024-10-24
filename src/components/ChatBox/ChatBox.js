@@ -347,7 +347,7 @@ const ChatBox = () => {
               {/* Display group avatar and name if it's a group chat */}
               <img
                 className="profile-icon"
-                src={chatUser.groupAvatar || defaultAvatar} // Fixed the curly braces here
+                src={chatUser.groupAvatar || defaultAvatar}
                 alt="Group Avatar"
               />
               <div className="user-info">
@@ -361,7 +361,11 @@ const ChatBox = () => {
               {/* Display user avatar and name for 1-on-1 chat */}
               <img
                 className="profile-icon"
-                src={chatUser.userData?.avatar || defaultAvatar} // Changed from photoURL to avatar
+                src={
+                  chatUser.userData?.avatar ||
+                  chatUser.userData?.photoURL ||
+                  defaultAvatar
+                }
                 alt="User Avatar"
               />
               <div className="user-info">
@@ -378,10 +382,11 @@ const ChatBox = () => {
                     <>
                       <span className="status-dot offline"></span>
                       <p className="status-text">
-                        Last seen{" "}
-                        {new Date(
-                          chatUser.userData?.lastSeen?.seconds * 1000
-                        ).toLocaleTimeString()}
+                        {chatUser.userData?.lastSeen
+                          ? `Last seen ${new Date(
+                              chatUser.userData.lastSeen.seconds * 1000
+                            ).toLocaleString()}`
+                          : "Last seen not available"}
                       </p>
                     </>
                   )}
@@ -421,19 +426,22 @@ const ChatBox = () => {
               senderName = memberAvatars[msg.sId].name;
             }
           } else if (msg.sId === chatUser.rId) {
-            senderAvatar = chatUser.userData?.avatar || defaultAvatar; // Using avatar instead of photoURL
+            senderAvatar =
+              chatUser.userData?.avatar ||
+              chatUser.userData?.photoURL ||
+              defaultAvatar; // Using avatar or photoURL
             senderName = `${chatUser.userData?.firstName || "Unknown"} ${
               chatUser.userData?.lastName || ""
             }`;
           } else {
-            senderAvatar = userData?.avatar || defaultAvatar; // Changed to avatar for current user
+            senderAvatar =
+              userData?.avatar || userData?.photoURL || defaultAvatar; // Changed to avatar or photoURL for current user
             senderName = `${userData?.firstName || "You"} ${
               userData?.lastName || ""
             }`;
           }
 
           return (
-            // Display each message, distinguishing between sent (r-msg) and received (s-msg) messages
             <div
               key={index}
               className={msg.sId === userData.uid ? "r-msg" : "s-msg"}
@@ -542,7 +550,7 @@ const ChatBox = () => {
                   <li key={index}>
                     <img
                       className="profile-icon"
-                      src={memberAvatars[member]?.avatar || defaultAvatar} // Updated to avatar
+                      src={memberAvatars[member]?.avatar || defaultAvatar}
                       alt={memberAvatars[member]?.name || "User Avatar"}
                     />
                     <p>{memberAvatars[member]?.name || `User ${index + 1}`}</p>
@@ -552,7 +560,7 @@ const ChatBox = () => {
                   <li key={index}>
                     <img
                       className="profile-icon"
-                      src={user?.avatar || defaultAvatar} // Changed to avatar
+                      src={user?.avatar || user?.photoURL || defaultAvatar}
                       alt={user?.firstName || "User Avatar"}
                     />
                     <p>{`${user?.firstName || "Unknown"} ${
@@ -565,7 +573,6 @@ const ChatBox = () => {
       )}
     </div>
   ) : (
-    // Default welcome message when no chat is selected
     <div className={`chat-welcome ${chatVisible ? "" : "hidden"}`}>
       <p>Click on a user to start chatting!</p>
     </div>

@@ -33,6 +33,7 @@ const LeftSidebar = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
   const [showGroupModal, setShowGroupModal] = useState(false);
+  const [searchName, setSearchName] = useState("");
 
   const toggleGroupModal = () => {
     setShowGroupModal((prevState) => !prevState);
@@ -145,13 +146,13 @@ const LeftSidebar = () => {
         // Update the `updatedAt` timestamp for one-on-one chats when a new message is added
         newMessageRef = doc(messagesRef, existingChat.messageId);
         await updateDoc(newMessageRef, {
-          updatedAt: serverTimestamp(),
+          updatedAt: serverTimestamp(), // Valid usage of serverTimestamp
         });
       } else {
         // Create a new chat if it doesn't exist
         newMessageRef = doc(messagesRef);
         await setDoc(newMessageRef, {
-          createdAt: serverTimestamp(),
+          createdAt: serverTimestamp(), // Valid usage of serverTimestamp
           messages: [],
         });
 
@@ -159,30 +160,24 @@ const LeftSidebar = () => {
           messageId: newMessageRef.id,
           lastMessage: "",
           rId: user.id,
-          updatedAt: serverTimestamp(),
+          updatedAt: Date.now(), // Use Date.now() for arrayUnion
           messageSeen: true,
         };
 
         // Update the chats for both users
         await Promise.all([
-          setDoc(
-            doc(db, "chats", user.id),
-            {
-              chatsData: arrayUnion({
-                messageId: newMessageRef.id,
-                lastMessage: "",
-                rId: userData.uid,
-                updatedAt: serverTimestamp(), // Make sure to set this here too
-                messageSeen: false,
-              }),
-            },
-            { merge: true }
-          ),
-          setDoc(
-            doc(db, "chats", userData.uid),
-            { chatsData: arrayUnion(newChatData) },
-            { merge: true }
-          ),
+          updateDoc(doc(db, "chats", user.id), {
+            chatsData: arrayUnion({
+              messageId: newMessageRef.id,
+              lastMessage: "",
+              rId: userData.uid,
+              updatedAt: Date.now(), // Use Date.now() here instead of serverTimestamp
+              messageSeen: false,
+            }),
+          }),
+          updateDoc(doc(db, "chats", userData.uid), {
+            chatsData: arrayUnion(newChatData), // Use Date.now() inside newChatData
+          }),
         ]);
       }
 
@@ -200,7 +195,14 @@ const LeftSidebar = () => {
 
       setChatVisible(true);
       setMessagesId(newMessageRef.id);
-    } catch (error) {}
+
+      // Clear search results and show chat list again after adding chat
+      setSearchResults([]); // Clear the search results
+      setShowSearch(false); // Hide the search box
+      setSearchName(""); // Reset the search input box
+    } catch (error) {
+      console.error("Error adding chat:", error); // Log error for debugging
+    }
   };
 
   const setChat = async (item) => {
@@ -249,9 +251,12 @@ const LeftSidebar = () => {
               onClick={() => addChat(user)} // Add chat with the selected user
             >
               <img
-                src={user.avatar || defaultAvatar} // Use 'avatar' for user avatar
+                src={user.avatar || user.photoURL || defaultAvatar} // Use avatar field or fallback to photoURL or defaultAvatar
                 alt="User Avatar"
                 className="profile-icon"
+                onError={(e) => {
+                  e.target.src = defaultAvatar; // If image fails to load, use fallback image
+                }}
               />
               <div className="chat-info">
                 <p className="chat-name">
@@ -273,10 +278,15 @@ const LeftSidebar = () => {
                 src={
                   chat.isGroup
                     ? chat.groupData?.groupAvatar || defaultAvatar
-                    : chat.userData?.avatar || defaultAvatar // Use 'avatar' for user avatar
+                    : chat.userData?.avatar ||
+                      chat.userData?.photoURL ||
+                      defaultAvatar // Fixed to handle both avatar and photoURL
                 }
                 alt="Chat Avatar"
                 className="profile-icon"
+                onError={(e) => {
+                  e.target.src = defaultAvatar; // If image fails to load, use fallback image
+                }}
               />
               <div className="chat-info">
                 {chat.isGroup ? (
