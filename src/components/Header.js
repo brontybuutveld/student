@@ -1,22 +1,56 @@
+import React, { useState, useEffect } from "react";
+import { useAuth, handleSignOut } from "../firebase";
+
 export default function Header() {
-    return (
-        <div style={{borderBottom:'5px solid white', margin: "auto"}}>
-            <ol className="breadcrumb">
-                <li><a href={"/home"}>Home</a></li>
-                <li>-</li>
-                <li><a href={"/calendar"}>Calendar</a></li>
-                <li>-</li>
-                <li><a href={"/chat"}>Chat</a></li>
-                <li>-</li>
-                <li><a href={"/account"}>Account</a></li>
-                <li>-</li>
-                <li><a href={"/login"}>Login</a></li>
-                <li>-</li>
-                <li><a href={"/signup"}>Sign up</a></li>
-                <li>-</li>
-                <li><a href={"/upload"}>Upload</a></li>
-            </ol>
-            <h1>YIYAPNP is yet another poorly named project</h1>
-        </div>
-    )
-};
+  const { currentUser } = useAuth();
+  const [isCurrentUser, setIsCurrentUser] = useState(false);
+  const [photoURL, setPhotoURL] = useState("");
+
+  useEffect(() => {
+    if (currentUser) {
+      setIsCurrentUser(true);
+      setPhotoURL(
+        currentUser.photoURL ||
+          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
+      );
+    } else {
+      setIsCurrentUser(false);
+    }
+  }, [currentUser]);
+
+  return (
+    <div className="headerbar">
+      <a href="/home">YIYAPNP</a>
+      <a href="/home">Home</a>
+
+      {/** if logged out display login/sign up buttons */}
+      {!isCurrentUser && (
+        <>
+          <a className="rightbutton" href="/login">
+            Login
+          </a>
+          <a className="rightbutton" href="/signup">
+            Sign up
+          </a>
+        </>
+      )}
+
+      {/** if logged in display profile and sign out */}
+      {isCurrentUser && (
+        <>
+          <a href="/calendar">Calendar</a>
+          <a href="/chat">Chat</a>
+          <a href="/notes">My notes</a>
+          <a href="/upload">My files</a>
+          <a className="header-right" href={`/profile/${currentUser.uid}`}>
+            <img src={photoURL} alt="avatar" className="mini-avatar" />
+          </a>
+          <a className="rightbutton" href="/home" onClick={handleSignOut}>
+            Sign out
+          </a>
+          <a className="right-nobkg" href="/searchprofile">Search User</a>
+        </>
+      )}
+    </div>
+  );
+}

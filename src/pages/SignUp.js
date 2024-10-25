@@ -6,12 +6,14 @@ import {
 import { auth, db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import Header from "../components/Header.js";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Merged useNavigate from main branch
 import { Form, Button, Card, Col, Row } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { ToastContainer, toast } from "react-toastify"; // Merged toast from group-feature
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SignUp() {
-  //Form input state vairables
+  //Form input state variables
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,6 +28,21 @@ export default function SignUp() {
   const [validated, setValidated] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
 
+  const navigate = useNavigate();
+
+  // Prevent signed-in users from accessing the page
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Redirect to home
+        navigate("/navpage");
+      }
+    });
+
+    // Cleanup listener
+    return () => unsubscribe();
+  }, [navigate]);
+
   //Monitor authentication state
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
@@ -33,7 +50,7 @@ export default function SignUp() {
     });
   }, []);
 
-  //
+  // Registration function
   const register = async (event) => {
     event.preventDefault();
 
@@ -59,7 +76,7 @@ export default function SignUp() {
     }
 
     try {
-      //Create user with email and pass
+      //Create user with email and password
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         registerEmail,
@@ -68,22 +85,27 @@ export default function SignUp() {
       console.log("User Created: " + userCredential.user);
 
       // Store additional user information in Firestore (first and last name as well as email)
-      // (may be changed) also store bio and level here too
       await setDoc(doc(db, "users", userCredential.user.uid), {
         firstName: registerFirst,
         lastName: registerLast,
         email: registerEmail,
-        bio: "No bio available", 
-        level: 1, 
+        bio: "No bio available", // Merged from group-feature
+        level: 1,
+        lastSeen: Date.now(), // Merged from group-feature
       });
-      
 
-      setIsRegistered(true); //Flag user as succesfully registered
+      // Initialize chat data for the user (from group-feature)
+      await setDoc(doc(db, "chats", userCredential.user.uid), {
+        chatData: [],
+      });
+
+      setIsRegistered(true); //Flag user as successfully registered
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         setEmailError("This email is already in use");
       }
       console.log(error.message);
+      toast.error(error.code); // Added from group-feature
     }
   };
 
@@ -95,7 +117,7 @@ export default function SignUp() {
           className="p-4 custom-card"
           style={{ maxWidth: "400px", width: "100%" }}
         >
-          {/*Shows the successfull card after sucessfull registration */}
+          {/*Shows the success card after successful registration */}
           {isRegistered ? (
             <Card.Body>
               <h3 className="mb-4 text-center">Success!</h3>
@@ -242,6 +264,7 @@ export default function SignUp() {
           )}
         </Card>
       </div>
+      <ToastContainer /> {/* Added from group-feature */}
     </>
   );
 }
