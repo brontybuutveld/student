@@ -1,28 +1,31 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from 'react';
 
-function App() {
-  // State to hold the theme, default is light
-  const [theme, setTheme] = useState("light");
+const ThemeToggle = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Function to toggle between dark and light themes
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    setIsDarkMode((prevMode) => !prevMode);
+
+    if (!isDarkMode) {
+      // Dark theme
+      document.documentElement.style.setProperty('--white', '#000');
+      document.documentElement.style.setProperty('--black', '#fff');
+      document.documentElement.style.setProperty('--maincolordark', '#1b3076');
+      document.documentElement.style.setProperty('--accentcolor', '#ffabdb');
+    } else {
+      // Light theme
+      document.documentElement.style.setProperty('--white', '#fff');
+      document.documentElement.style.setProperty('--black', '#000');
+      document.documentElement.style.setProperty('--maincolordark', '#07021c');
+      document.documentElement.style.setProperty('--accentcolor', '#dbabff');
+    }
   };
 
-  // Apply theme to the body on mount and when theme changes
-  useEffect(() => {
-    document.body.className = theme;
-  }, [theme]);
-
   return (
-    <div>
-      <button onClick={toggleTheme}>
-        Switch to {theme === "light" ? "Dark" : "Light"} Theme
-      </button>
-      <h1>Hello, welcome to theme switching!</h1>
-    </div>
+    <a onClick={toggleTheme}>
+      {isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+    </a>
   );
+};
 
-}
-
-export default App;
+export default ThemeToggle;

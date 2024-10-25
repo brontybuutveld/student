@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth, handleSignOut } from "../firebase";
+import ThemeToggle from "./Theme_StickyNote/Theme";
 
 export default function Header() {
   const { currentUser } = useAuth();
@@ -38,6 +39,7 @@ export default function Header() {
       {/** if logged in display profile and sign out */}
       {isCurrentUser && (
         <>
+          <ThemeToggle />
           <a href="/calendar">Calendar</a>
           <a href="/chat">Chat</a>
           <a href="/notes">My notes</a>
