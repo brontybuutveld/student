@@ -9,11 +9,10 @@ import FriendRequestButton from "../components/FriendRequestButton.js";
 import FriendList from "../components/FriendList.js";
 import FriendRequests from "../components/FriendRequestList.js";
 import Calendar from "../components/Calendar.js";
-import placeholderIcon from "../components/images/placeholder.png";
 
 export default function UserProfile() {
-  const copyIcon =
-    "https://icon-library.com/images/copy-to-clipboard-icon/copy-to-clipboard-icon-1.jpg";
+  const placeholderIcon = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541";
+  const copyIcon = "https://icon-library.com/images/copy-to-clipboard-icon/copy-to-clipboard-icon-1.jpg";
   const { currentUser, userData } = useAuth(); // Current logged in user
   const { userid } = useParams(); // user id of the profile
 
@@ -27,7 +26,7 @@ export default function UserProfile() {
 
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const [photoURL, setPhotoURL] = useState(
-    {placeholderIcon}
+    placeholderIcon
   );
   const [userLoading, setUserLoading] = useState(true);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
@@ -70,7 +69,7 @@ export default function UserProfile() {
 
         setPhotoURL(
           currentUser.photoURL ||
-            {placeholderIcon}
+            placeholderIcon
         );
         setIsCurrentUser(true);
       } else {
@@ -90,7 +89,7 @@ export default function UserProfile() {
 
             setPhotoURL(
               userData.photoURL ||
-                {placeholderIcon}
+                placeholderIcon
             );
           } else {
             setUser({ firstName: "Error getting user", email: "" });
@@ -116,8 +115,8 @@ export default function UserProfile() {
       <Header />
 
       <div className="profile-container">
-      <div className="profile-calendar">
-          <Calendar uid={userid} />
+        <div className="profile-calendar">
+          <Calendar uidProp={userid} />
         </div>
         <div className="profile-main-box">
           <div className="profile-box">

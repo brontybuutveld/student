@@ -46,6 +46,7 @@ export default function NotesApp() {
 
       {/* Form to create or edit a note */}
       <input
+        className="notes"
         type="text"
         placeholder="Note Title"
         value={title}

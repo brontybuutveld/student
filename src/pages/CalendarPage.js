@@ -25,7 +25,7 @@ export default function CalendarPage() {
         <>
             <Header />
             <div className="calendar-page">
-            <Calendar uid={currentUser.uid} />
+            <Calendar uidProp={currentUser.uid} />
         </div>
         </>
     );
